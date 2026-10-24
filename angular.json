@@ -28,7 +28,15 @@
                 "test": {
                     "builder": "@angular/build:unit-test",
                     "options": {
-                        "tsConfig": "projects/perpetuum-analytics/tsconfig.spec.json"
+                        "tsConfig": "projects/perpetuum-analytics/tsconfig.spec.json",
+                        "coverageInclude": ["projects/perpetuum-analytics/src/lib/**/*.ts"],
+                        "coverageExclude": ["**/*.spec.ts", "**/testing/**"],
+                        "coverageThresholds": {
+                            "statements": 100,
+                            "branches": 100,
+                            "functions": 100,
+                            "lines": 100
+                        }
                     }
                 },
                 "lint": {
