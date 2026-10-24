@@ -13,8 +13,8 @@ export class Analytics {
     private readonly config = inject(ANALYTICS_CONFIG)
     private readonly document = inject(DOCUMENT)
     private readonly inBrowser = isPlatformBrowser(inject(PLATFORM_ID))
-    private readonly router = inject(Router, { optional: true })
-    private readonly location = inject(Location, { optional: true })
+    private readonly router = inject(Router)
+    private readonly location = inject(Location)
     private readonly destroyRef = inject(DestroyRef)
     private googleTag: GoogleTag | null = null
 
@@ -37,7 +37,7 @@ export class Analytics {
     }
 
     private sendPageViewAfterEachNavigation(): void {
-        this.router?.events
+        this.router.events
             .pipe(
                 filter((event) => event instanceof NavigationEnd),
                 takeUntilDestroyed(this.destroyRef)
@@ -47,11 +47,7 @@ export class Analytics {
     }
 
     private sendPageView(): void {
-        this.googleTag?.pageView({ page_location: this.currentAddress(), page_title: this.document.title })
-    }
-
-    private currentAddress(): string {
-        const path = this.router && this.location ? this.location.prepareExternalUrl(this.router.url) : this.document.location.pathname
-        return new URL(path, this.document.location.origin).href
+        const address = new URL(this.location.prepareExternalUrl(this.router.url), this.document.location.origin)
+        this.googleTag?.pageView({ page_location: address.href, page_title: this.document.title })
     }
 }

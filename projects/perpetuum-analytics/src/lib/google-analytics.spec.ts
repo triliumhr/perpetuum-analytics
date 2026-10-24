@@ -71,4 +71,12 @@ describe('Google Analytics 4 through gtag.js', () => {
         expect(scriptsLoadedFrom('googletagmanager.com')).toEqual([])
         expect(dataLayerEntries()).toEqual([])
     })
+
+    it('sends custom events in an app without the router', () => {
+        TestBed.configureTestingModule({ providers: [provideAnalytics({ tag: 'gtag', measurementId: 'G-TEST123' })] })
+
+        TestBed.inject(Analytics).event('sign_up', { method: 'email' })
+
+        expect(gtagCommands('event')).toEqual([['event', 'sign_up', { method: 'email' }]])
+    })
 })
