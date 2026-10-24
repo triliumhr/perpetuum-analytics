@@ -1,8 +1,10 @@
 # &lt;perpetuum-analytics /&gt;
 
-Google Analytics 4 and Google Tag Manager for Angular. One provider loads the tag in the browser, sends a page view after every navigation and stays quiet on the server.
+SSR-safe Google Analytics 4 and Google Tag Manager for Angular.
 
-Works with Angular 21 and 22, standalone and with server-side rendering.
+On the server it stays quiet: no `window`, no script, no data layer, so server-side rendering and hydration run as if analytics were not there. In the browser one provider loads the tag and sends a page view after every navigation.
+
+Works with Angular 21 and 22, standalone, with or without server-side rendering.
 
 ## Installation
 
@@ -73,7 +75,7 @@ The defaults reach Google before any other command. Without `consentDefaults`, n
 
 ## Server-side rendering
 
-On the server the provider does nothing: no script, no data layer, no events. Everything starts after the app boots in the browser.
+This is why the package exists. On the server the provider does nothing: it never reads `window` or `document.defaultView`, adds no script and sends no events, so the rendered HTML is the same with or without analytics. Everything starts once the app runs in the browser, and the first navigation there sends the first page view. A spec renders the app on the server platform and checks that nothing reaches Google.
 
 ## Moving from 2.x
 

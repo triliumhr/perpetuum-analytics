@@ -1,6 +1,6 @@
 {
     "name": "@triliumhr/perpetuum-analytics",
-    "description": "Google Analytics 4 and Google Tag Manager for Angular: one provider, a page view on every navigation, safe on the server.",
+    "description": "SSR-safe Google Analytics 4 and Google Tag Manager for Angular: quiet on the server, a page view on every navigation in the browser.",
     "version": "3.0.0",
     "author": {
         "name": "Nikola Rožić",
