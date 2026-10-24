@@ -73,8 +73,6 @@ inject(Analytics).updateConsent({ analytics_storage: 'granted' })
 
 The defaults reach Google before any other command. Without `consentDefaults`, nothing about consent is sent.
 
-Plays well with Consent Ledger, also by Trilium, and with any other consent management tool that reports the visitor's choice: pass that choice to `updateConsent()`.
-
 ## Server-side rendering
 
 This is why the package exists. On the server the provider does nothing: it never reads `window` or `document.defaultView`, adds no script and sends no events, so the rendered HTML is the same with or without analytics. Everything starts once the app runs in the browser, and the first navigation there sends the first page view. A spec renders the app on the server platform and checks that nothing reaches Google.
