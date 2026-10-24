@@ -2,7 +2,7 @@
     "name": "perpetuum-analytics-workspace",
     "private": true,
     "description": "Workspace for the perpetuum-analytics package (projects/perpetuum-analytics).",
-    "license": "GPL-3.0",
+    "license": "MIT",
     "engines": {
         "node": "^22.22.3 || >=24.15.0"
     },
