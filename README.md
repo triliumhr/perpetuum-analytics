@@ -1,95 +1,89 @@
 # Perpetuum Ng Analytics
 
-[![](https://img.shields.io/badge/version-1.1.4-green.svg)](https://perpetuum.eu)
-[![](https://img.shields.io/badge/Angular-7+-informational.svg)](https://angular.io)
+Google Analytics for Angular that is safe with server-side rendering: on the server it does nothing, in the browser it loads the tag and sends a page view after every navigation.
 
-![PerpetuumNgAnalytics](https://repository-images.githubusercontent.com/239224377/1e536b00-4b7d-11ea-8f95-3681c51d54bd)
+Published on npm as [`perpetuum-analytics`](https://www.npmjs.com/package/perpetuum-analytics). Works with Angular 21 and 22.
 
-## About
+## Installation
 
-This is Angular module that enables easy Google Analytics integration into Angular SPA-s, and most importantly it is 100% SSR compatible, so you can use it even if you are running Angular Universal, it won't break the server side rendering.
-
-Tracking is possible using any script provided by Google Analytics, but we recommend using [global site tag](<https://developers.google.com/analytics/devguides/collection/gtagjs#:~:text=The%20global%20site%20tag%20(gtag,non%2Dproduct%20specific)%20gtag.>) (gtag.js)
-
-Tested with Angular 7+ although it might work with older versions as well.
-
-## Google Analytics 4 support
-
-You can use this module with the GA4, but you have to use [global site tag](<https://developers.google.com/analytics/devguides/collection/gtagjs#:~:text=The%20global%20site%20tag%20(gtag,non%2Dproduct%20specific)%20gtag.>) (gtag.js)
-If you are already using this module with Universal Analytics, follow the [migration guide](https://support.google.com/analytics/answer/10759417?hl=en), make sure to instantiate the perpetuum-analytics module using gtag as trackingType
-
-Congrats, you are good to go, everything else can stay the same.
-
-## Installation and configuration
-
--   Install package using npm `npm i perpetuum-analytics`
--   in your app.module.ts add Module to imports array:
-
-```javascript
-import { ITrackingType, AnalyticsModule } from 'perpetuum-analytics'
-
-...
-
-constructor(
-    private analyticsService: AnalyticsService
-) {}
-
-...
-
-imports: [
-    ...
-    AnalyticsModule.forRoot({
-        trackingId: <YOUR TRACKING ID>,
-        trackingType: 'gtag',
-    }),
-],
+```bash
+npm install perpetuum-analytics
 ```
 
-Replace <YOUR TRACKING ID> with Google Analytics ID ([Find your Analytics tracking id](https://support.google.com/analytics/answer/1008080?hl=en))
-Supported tracking types are 'analytics', 'gtag' or 'gtm'.
+Add the module with your measurement id (`G-…`) to the application:
 
--   in your app.component.ts initialize tracking like this:
+```ts
+import { AnalyticsModule } from 'perpetuum-analytics'
 
-```javascript
+@NgModule({
+    imports: [
+        AnalyticsModule.forRoot({
+            trackingId: 'G-XXXXXXXXXX',
+            trackingType: 'gtag',
+        }),
+    ],
+})
+export class AppModule {}
+```
+
+In a standalone application, use `importProvidersFrom(AnalyticsModule.forRoot({ … }))` in the application providers.
+
+Start tracking once, when the application starts:
+
+```ts
 import { AnalyticsService } from 'perpetuum-analytics'
 
-...
+export class AppComponent implements OnInit {
+    private analytics = inject(AnalyticsService)
 
-ngOnInit(): void {
-   this.analyticsService.setGoogleAnalyticsScripts()
+    ngOnInit(): void {
+        this.analytics.setGoogleAnalyticsScripts()
+    }
 }
 ```
 
-Note that we need to pass a reference to renderer as a param
+The service loads gtag.js and sends a page view with the page title and path after each navigation. If your site asks visitors for consent first, call `setGoogleAnalyticsScripts()` only after they agree.
 
-If you are in EU and need to be GDPR-compliant, you can first check if you have user permission to use analytics, and initialize module conditionally.
+`trackingType` also accepts `'gtm'` and `'analytics'`. With those, the service expects the Google Tag Manager or analytics.js snippet to be on the page already. For Google Analytics 4, use `'gtag'`.
 
-This method will generate tracking script, and it will initialize tracking, you are all set. Every route change will send event to Google Analytics.
+## Custom events
 
-## Sending custom click events using directive
-
-PerpetuumAnalytics module provides directive, so you can easily send custom events for any element in your application
-
-Let's say tact we have "Add to cart" button, and we would like to track user interactions. We can easily bind a directive to any element and send custom event whenever user clicks on our button
+The `perpetuumAnalytics` directive sends an event when its element is clicked:
 
 ```html
 <button
-    [perpetuumAnalytics]="{ eventCategory: 'Sample category', eventAction: 'Add to cart click', eventLabel: 'item.name', eventValue: item.price }"
+    type="button"
+    [perpetuumAnalytics]="{ eventCategory: 'Cart', eventAction: 'add_to_cart', eventLabel: item.name, eventValue: item.price }"
     (click)="addToCart(item)"
 >
     Add to cart
 </button>
 ```
 
-Here we are binding directive to our button, and we are passing event data object as argument to our directive
+From code, call `analytics.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })`.
 
-## Issues
+## From 1.x to 2.x
 
-For any known issues check list of opened [issues](https://github.com/nrozic/perpetuum-ng-analytics/issues) and if you find any issue with this module, please consider opening an [issue](https://github.com/nrozic/perpetuum-ng-analytics/issues/new) with description
+`setGoogleAnalyticsScripts()` no longer needs a `Renderer2`. The argument is still accepted and ignored.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
+## Development
 
-## Potential breaking changes from version 2.0.0
+The repository is an Angular CLI workspace with the library in `projects/perpetuum-analytics`. You need Node.js 22.22.3 or 24.15 and newer.
 
-You don't have to pass renderer2 as param from the component when calling setGoogleAnalyticsScripts method in analytics service.
-Method argument is deprecated and can/will be removed in future versions
+```bash
+npm ci
+npm test          # Vitest specs
+npm run lint      # ESLint with angular-eslint
+npm run build     # the package in dist/perpetuum-analytics
+npm run pack:check  # build, npm pack --dry-run and publint
+```
+
+GitHub Actions runs the same checks on every pull request, and the specs also run on Angular 21.
+
+## Questions and ideas
+
+Open an [issue](https://github.com/nrozic/perpetuum-ng-analytics/issues) and describe what you would like the package to do.
+
+## Licence
+
+[GPL-3.0](LICENSE.md)

@@ -8,7 +8,7 @@
     },
     "scripts": {
         "ng": "ng",
-        "build": "ng build perpetuum-analytics",
+        "build": "ng build perpetuum-analytics && node tools/copy-package-files.mjs",
         "test": "ng test perpetuum-analytics --watch=false",
         "lint": "ng lint perpetuum-analytics",
         "format": "prettier --write .",

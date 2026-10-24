@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+-   Development moved to Angular 22, Vitest and ESLint, with GitHub Actions checking every pull request.
+-   The package now lists `@angular/platform-browser`, `@angular/router` and `rxjs` as peer dependencies and supports Angular 21 and 22.
+-   README, licence and changelog ship with the package from one place.
+
+## [2.0.20] - 2024-04-11
+
+### Fixed
+
+-   Page views wait for the page title, so it is no longer missing in some events (#40).
+
+## [2.0.1 – 2.0.16] - 2022-04-19 to 2022-04-21
+
+### Changed
+
+-   Built with Angular 13 in partial (Ivy) compilation mode.
+
+## [2.0.0] - 2022-04-19
+
+### Changed
+
+-   `setGoogleAnalyticsScripts()` no longer needs a `Renderer2`; the argument is accepted and ignored.
+
 ## [1.1.4] - 2019-02-24
 
 ### Fixed
