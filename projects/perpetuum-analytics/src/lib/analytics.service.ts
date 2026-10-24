@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core'
+import { Injectable, Inject, PLATFORM_ID, Renderer2, RendererFactory2, inject } from '@angular/core'
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router'
 import { DOCUMENT, isPlatformBrowser } from '@angular/common'
 import { delay, filter, map, mergeMap } from 'rxjs/operators'
@@ -6,26 +6,25 @@ import { Title } from '@angular/platform-browser'
 
 import { IAnalyticsConfig, IEventData } from './models/Analytics-config.model'
 
-declare const gtag: any
-declare const ga: any
-declare const dataLayer: any
+declare const gtag: (...commands: unknown[]) => void
+declare const ga: (...commands: unknown[]) => void
+declare const dataLayer: unknown[]
 
 @Injectable({
     providedIn: 'root',
 })
 export class AnalyticsService {
-    constructor(
-        @Inject(PLATFORM_ID) protected platformId: object,
-        @Inject(DOCUMENT) private document: Document,
-        @Inject('gaConfig') private config: IAnalyticsConfig,
-        private router: Router,
-        private activatedRoute: ActivatedRoute,
-        private titleService: Title,
-        private rendererFactory: RendererFactory2
-    ) {
-        this.renderer = rendererFactory.createRenderer(null, null)
-    }
-    private renderer: Renderer2
+    protected platformId = inject(PLATFORM_ID)
+    private document = inject(DOCUMENT)
+    private router = inject(Router)
+    private activatedRoute = inject(ActivatedRoute)
+    private titleService = inject(Title)
+    private renderer: Renderer2 = inject(RendererFactory2).createRenderer(null, null)
+
+    // The string token 'gaConfig' is public API in 2.x (apps may provide it without forRoot),
+    // and inject() only accepts typed tokens, so the configuration keeps constructor injection.
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    constructor(@Inject('gaConfig') private config: IAnalyticsConfig) {}
 
     static gaSendEvent(data: IEventData): void {
         ga('send', 'event', data)
@@ -53,11 +52,10 @@ export class AnalyticsService {
      * @description It will initialize Google Analytics module and tracking. Call this method when application boots up.
      * Good place to call this method is in `app.component` on init
      *
-     * @param renderer Reference to `Renderer2` since renderer can't be used directly in services.
-     * Deprecated: since version 2.0.0 reference to renderer2 is not needed anymore. It remains as optional argument, but it won't be
-     * used anymore
+     * @param _renderer Deprecated since 2.0.0 and ignored: the service creates its own renderer.
+     * It stays optional so that existing calls keep compiling.
      */
-    setGoogleAnalyticsScripts(renderer?: Renderer2): void {
+    setGoogleAnalyticsScripts(_renderer?: Renderer2): void {
         if (isPlatformBrowser(this.platformId)) {
             switch (this.config.trackingType) {
                 case 'analytics':
@@ -93,10 +91,8 @@ export class AnalyticsService {
 
     /**
      * @description It will create gtag script tag dynamically using tracking ID provided in configuration
-     *
-     * @param renderer reference to `Renderer2`
      */
-    private _setGtag(renderer?: Renderer2): void {
+    private _setGtag(): void {
         if (this.config.trackingType === 'gtag') {
             const gatag: HTMLScriptElement = this.renderer.createElement('script')
             gatag.setAttribute('async', '')

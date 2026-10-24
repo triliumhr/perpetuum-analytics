@@ -1,4 +1,4 @@
-import { Directive, Input, HostListener } from '@angular/core'
+import { Directive, Input, HostListener, inject } from '@angular/core'
 import { IEventData } from './models/Analytics-config.model'
 import { AnalyticsService } from './analytics.service'
 
@@ -8,9 +8,9 @@ import { AnalyticsService } from './analytics.service'
 export class AnalyticsDirective {
     @Input({ required: true }) perpetuumAnalytics!: IEventData
 
+    private analyticsService = inject(AnalyticsService)
+
     @HostListener('click') onClick() {
         this.analyticsService.sendEvent(this.perpetuumAnalytics)
     }
-
-    constructor(private analyticsService: AnalyticsService) {}
 }

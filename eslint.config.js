@@ -11,6 +11,8 @@ module.exports = defineConfig([
         processor: angular.processInlineTemplates,
         rules: {
             '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'perpetuum', style: 'camelCase' }],
+            '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
         },
     },
     {
