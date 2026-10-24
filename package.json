@@ -9,7 +9,7 @@
     "scripts": {
         "ng": "ng",
         "build": "ng build perpetuum-analytics && node tools/copy-package-files.mjs",
-        "test": "ng test perpetuum-analytics --watch=false",
+        "test": "ng test perpetuum-analytics --watch=false --coverage",
         "lint": "ng lint perpetuum-analytics",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
@@ -24,6 +24,7 @@
         "@angular/compiler-cli": "^22.2.3",
         "@angular/core": "^22.2.3",
         "@angular/platform-browser": "^22.2.3",
+        "@angular/platform-server": "^22.2.3",
         "@angular/router": "^22.2.3",
         "@eslint/js": "^10.0.1",
         "@vitest/coverage-v8": "^5.0.5",
