@@ -55,4 +55,12 @@ describe('Google Tag Manager', () => {
 
         expect(dataLayerEvents().slice(1)).toEqual([{ event: 'add_to_cart', currency: 'EUR', value: 12.5 }])
     })
+
+    it('keeps the event name when a parameter is also called event', () => {
+        startApp()
+
+        TestBed.inject(Analytics).event('sign_up', { event: 'purchase', method: 'email' })
+
+        expect(dataLayerEvents().slice(1)).toEqual([{ event: 'sign_up', method: 'email' }])
+    })
 })
