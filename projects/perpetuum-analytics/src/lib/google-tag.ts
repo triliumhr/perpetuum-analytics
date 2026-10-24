@@ -1,4 +1,4 @@
-import { AnalyticsConfig, EventParams, GoogleAnalyticsConfig, TagManagerConfig } from './analytics-config'
+import { AnalyticsConfig, ConsentState, EventParams, GoogleAnalyticsConfig, TagManagerConfig } from './analytics-config'
 
 export interface PageView {
     readonly page_location: string
@@ -9,11 +9,15 @@ export interface PageView {
 export interface GoogleTag {
     pageView(view: PageView): void
     event(name: string, params: EventParams): void
+    updateConsent(choices: ConsentState): void
 }
 
 type Gtag = (...commands: unknown[]) => void
 
 export function installGoogleTag(document: Document, config: AnalyticsConfig): GoogleTag {
+    // Consent Mode needs the defaults on the data layer before the tag's first command.
+    if (config.consentDefaults) gtagOn(document)('consent', 'default', config.consentDefaults)
+
     switch (config.tag) {
         case 'gtag':
             return installGtag(document, config)
@@ -32,10 +36,12 @@ function installGtag(document: Document, config: GoogleAnalyticsConfig): GoogleT
     return {
         pageView: (view) => gtag('event', 'page_view', view),
         event: (name, params) => gtag('event', name, params),
+        updateConsent: (choices) => gtag('consent', 'update', choices),
     }
 }
 
 function installTagManager(document: Document, config: TagManagerConfig): GoogleTag {
+    const gtag = gtagOn(document)
     const dataLayer = dataLayerOf(windowOf(document))
     dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
     loadScript(document, `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.containerId)}`)
@@ -43,6 +49,8 @@ function installTagManager(document: Document, config: TagManagerConfig): Google
     return {
         pageView: (view) => dataLayer.push({ event: 'page_view', ...view }),
         event: (name, params) => dataLayer.push({ event: name, ...params }),
+        // Tag Manager reads consent from the same gtag commands as gtag.js.
+        updateConsent: (choices) => gtag('consent', 'update', choices),
     }
 }
 

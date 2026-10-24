@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NavigationEnd, Router } from '@angular/router'
 import { filter } from 'rxjs'
 
-import { ANALYTICS_CONFIG, EventParams } from './analytics-config'
+import { ANALYTICS_CONFIG, ConsentState, EventParams } from './analytics-config'
 import { GoogleTag, installGoogleTag } from './google-tag'
 
 /** Sends what happens in the app to Google: page views on its own, events when asked. */
@@ -29,6 +29,11 @@ export class Analytics {
     /** Sends a custom event, such as `add_to_cart` or `sign_up`. */
     event(name: string, params: EventParams = {}): void {
         this.googleTag?.event(name, params)
+    }
+
+    /** Passes the visitor's consent choice on to Google, for example from the app's own cookie banner. */
+    updateConsent(choices: ConsentState): void {
+        this.googleTag?.updateConsent(choices)
     }
 
     private sendPageViewAfterEachNavigation(): void {
