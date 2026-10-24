@@ -7,26 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.0] - Unreleased
 
-The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence. See “Moving from 2.x” in the README.
+Our best version so far: SSR-safe by design, Google Tag Manager without a snippet, Consent Mode, and every release proven by 100 % test coverage and an end-to-end test of a real SSR app. The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence.
+
+### Breaking changes
+
+Step-by-step guide: [Moving from 2.x](docs/en/06-migrating-from-2.md).
+
+-   New package name: `npm i @triliumhr/perpetuum-analytics` instead of `perpetuum-analytics`.
+-   `AnalyticsModule.forRoot()` is replaced by `provideAnalytics({ tag: 'gtag', measurementId })` or `provideAnalytics({ tag: 'gtm', containerId })`.
+-   `setGoogleAnalyticsScripts()` is gone: the provider starts on its own in the browser.
+-   `AnalyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` is replaced by `Analytics.event(name, params)` with GA4 names and parameters.
+-   The `[perpetuumAnalytics]` directive is replaced by `perpetuumTrack` with `[perpetuumTrackParams]`.
+-   analytics.js (`trackingType: 'analytics'`) is no longer supported, since Google retired Universal Analytics.
+-   Angular 21 or 22 is required; `@angular/router` and `rxjs` are peer dependencies.
+-   With Google Tag Manager, remove the snippet from `index.html`; the package loads the container.
 
 ### Added
 
--   `provideAnalytics()` for Google Analytics 4 (`tag: 'gtag'`) and Google Tag Manager (`tag: 'gtm'`): the tag loads on its own when the app starts in the browser, with one page view per navigation.
--   Google Tag Manager loads the container itself; no snippet in `index.html` is needed.
--   `Analytics.event(name, params)` and the `perpetuumTrack` directive for custom events with GA4 names and parameters.
--   Consent Mode as an option: `consentDefaults` and `Analytics.updateConsent()`.
--   Specs, linting and builds on every pull request, on Angular 21 and 22.
+-   `provideAnalytics()` for Google Analytics 4 and Google Tag Manager: the tag loads once when the app starts in the browser, with one page view per navigation.
+-   Google Tag Manager loads the container itself and receives page views and events in its data layer.
+-   `Analytics.event(name, params)` and the `perpetuumTrack` directive for custom events, also in apps without the router.
+-   Consent Mode v2: `consentDefaults`, sent before any other command, and `Analytics.updateConsent()`.
+-   Support for NgModule apps and zoneless apps, each covered by specs.
+-   Proof of SSR safety: a spec renders through `@angular/platform-server`, and an end-to-end test runs a demo app with Angular SSR in Chromium.
+-   100 % line, branch, function and statement coverage as a gate on every pull request and release.
+-   Releases from version tags only, published to npm with provenance.
+-   Documentation with how-to examples and a FAQ, in English and Croatian.
 
 ### Changed
 
 -   Page views carry the full address and the route's title as soon as the router sets it, without a fixed delay.
--   Supports Angular 21 and 22; `@angular/router` and `rxjs` are peer dependencies.
 -   Licence MIT instead of GPL-3.0.
+
+### Fixed
+
+-   With Google Tag Manager, an event parameter named `event` can no longer turn one event into another.
 
 ### Removed
 
 -   `AnalyticsModule`, `AnalyticsService`, the `perpetuumAnalytics` directive and the `I*` config types.
--   analytics.js (`trackingType: 'analytics'`), since Google retired Universal Analytics.
 
 ## [2.0.20] - 2024-04-11
 
