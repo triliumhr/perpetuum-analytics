@@ -1,80 +1,107 @@
-# Perpetuum Ng Analytics
+# &lt;perpetuum-analytics /&gt;
 
-Google Analytics for Angular that is safe with server-side rendering: on the server it does nothing, in the browser it loads the tag and sends a page view after every navigation.
+Google Analytics 4 and Google Tag Manager for Angular. One provider loads the tag in the browser, sends a page view after every navigation and stays quiet on the server.
 
-Published on npm as [`perpetuum-analytics`](https://www.npmjs.com/package/perpetuum-analytics). Works with Angular 21 and 22.
+Works with Angular 21 and 22, standalone and with server-side rendering.
 
 ## Installation
 
 ```bash
-npm install perpetuum-analytics
+npm install @triliumhr/perpetuum-analytics
 ```
 
-Add the module with your measurement id (`G-…`) to the application:
+## Google Analytics 4
+
+Add the provider with your measurement id (`G-…`):
 
 ```ts
-import { AnalyticsModule } from 'perpetuum-analytics'
+// app.config.ts
+import { provideAnalytics } from '@triliumhr/perpetuum-analytics'
 
-@NgModule({
-    imports: [
-        AnalyticsModule.forRoot({
-            trackingId: 'G-XXXXXXXXXX',
-            trackingType: 'gtag',
-        }),
-    ],
-})
-export class AppModule {}
-```
-
-In a standalone application, use `importProvidersFrom(AnalyticsModule.forRoot({ … }))` in the application providers.
-
-Start tracking once, when the application starts:
-
-```ts
-import { AnalyticsService } from 'perpetuum-analytics'
-
-export class AppComponent implements OnInit {
-    private analytics = inject(AnalyticsService)
-
-    ngOnInit(): void {
-        this.analytics.setGoogleAnalyticsScripts()
-    }
+export const appConfig: ApplicationConfig = {
+    providers: [provideRouter(routes), provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX' })],
 }
 ```
 
-The service loads gtag.js and sends a page view with the page title and path after each navigation. If your site asks visitors for consent first, call `setGoogleAnalyticsScripts()` only after they agree.
+That is all. When the app starts in the browser, gtag.js loads once and every navigation sends one `page_view` with the full address and the route's title.
 
-`trackingType` also accepts `'gtm'` and `'analytics'`. With those, the service expects the Google Tag Manager or analytics.js snippet to be on the page already. For Google Analytics 4, use `'gtag'`.
+## Google Tag Manager
+
+```ts
+provideAnalytics({ tag: 'gtm', containerId: 'GTM-XXXXXXX' })
+```
+
+The container loads with the `gtm.js` event. Page views arrive in the data layer as `page_view` events, and custom events under their own names, ready for the tags you set up in the container.
 
 ## Custom events
 
-The `perpetuumAnalytics` directive sends an event when its element is clicked:
+From a template, with the `perpetuumTrack` directive:
 
 ```html
-<button
-    type="button"
-    [perpetuumAnalytics]="{ eventCategory: 'Cart', eventAction: 'add_to_cart', eventLabel: item.name, eventValue: item.price }"
-    (click)="addToCart(item)"
->
-    Add to cart
-</button>
+<button type="button" perpetuumTrack="add_to_cart" [perpetuumTrackParams]="{ currency: 'EUR', value: item.price }">Add to cart</button>
 ```
 
-From code, call `analytics.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })`.
+```ts
+import { TrackEvent } from '@triliumhr/perpetuum-analytics'
 
-## From 1.x to 2.x
+@Component({ imports: [TrackEvent] /* … */ })
+```
 
-`setGoogleAnalyticsScripts()` no longer needs a `Renderer2`. The argument is still accepted and ignored.
+From code:
+
+```ts
+inject(Analytics).event('sign_up', { method: 'email' })
+```
+
+Event names and parameters are the ones Google Analytics 4 uses (`add_to_cart`, `purchase`, `value`, `currency`, `items`…).
+
+## Consent Mode
+
+If your site uses Google Consent Mode, give the defaults in the config and pass on the visitor's choice when your cookie banner reports it:
+
+```ts
+provideAnalytics({
+    tag: 'gtag',
+    measurementId: 'G-XXXXXXXXXX',
+    consentDefaults: { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' },
+})
+
+inject(Analytics).updateConsent({ analytics_storage: 'granted' })
+```
+
+The defaults reach Google before any other command. Without `consentDefaults`, nothing about consent is sent.
+
+## Server-side rendering
+
+On the server the provider does nothing: no script, no data layer, no events. Everything starts after the app boots in the browser.
+
+## Moving from 2.x
+
+Version 3 is a new package name and a smaller API.
+
+| 2.x                                                                                  | 3.x                                                                |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `npm i perpetuum-analytics`                                                          | `npm i @triliumhr/perpetuum-analytics`                             |
+| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`                      | `provideAnalytics({ tag: 'gtag', measurementId })`                 |
+| `trackingType: 'gtm'` with your own snippet                                          | `provideAnalytics({ tag: 'gtm', containerId })`, no snippet needed |
+| `analytics.setGoogleAnalyticsScripts()` in `AppComponent`                            | nothing, the provider starts on its own                            |
+| `analyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                    |
+| `[perpetuumAnalytics]="{ … }"`                                                       | `perpetuumTrack="name"` with `[perpetuumTrackParams]`              |
+| `trackingType: 'analytics'` (analytics.js)                                           | not supported, Google retired Universal Analytics                  |
+
+If you called `setGoogleAnalyticsScripts()` only after consent, either add the provider at that point (lazy route or `bootstrapApplication` after the choice) or use Consent Mode.
+
+Version 2.x stays on npm under `perpetuum-analytics` and keeps working.
 
 ## Development
 
-The repository is an Angular CLI workspace with the library in `projects/perpetuum-analytics`. You need Node.js 22.22.3 or 24.15 and newer.
+An Angular CLI workspace with the library in `projects/perpetuum-analytics`. You need Node.js 22.22.3 or 24.15 and newer.
 
 ```bash
 npm ci
-npm test          # Vitest specs
-npm run lint      # ESLint with angular-eslint
-npm run build     # the package in dist/perpetuum-analytics
+npm test            # Vitest specs
+npm run lint        # ESLint with angular-eslint
+npm run build       # the package in dist/perpetuum-analytics
 npm run pack:check  # build, npm pack --dry-run and publint
 ```
 
@@ -82,8 +109,10 @@ GitHub Actions runs the same checks on every pull request, and the specs also ru
 
 ## Questions and ideas
 
-Open an [issue](https://github.com/nrozic/perpetuum-ng-analytics/issues) and describe what you would like the package to do.
+Open an [issue](https://github.com/triliumhr/perpetuum-analytics/issues) and describe what you would like the package to do.
 
 ## Licence
 
-[GPL-3.0](LICENSE.md)
+[MIT](LICENSE.md) from 3.0.0. Versions up to 2.0.20 were published under GPL-3.0.
+
+Made by [Trilium](https://trilium.io).

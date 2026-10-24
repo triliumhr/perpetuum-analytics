@@ -5,13 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.0.0] - Unreleased
+
+The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence. See “Moving from 2.x” in the README.
+
+### Added
+
+-   `provideAnalytics()` for Google Analytics 4 (`tag: 'gtag'`) and Google Tag Manager (`tag: 'gtm'`): the tag loads on its own when the app starts in the browser, with one page view per navigation.
+-   Google Tag Manager loads the container itself; no snippet in `index.html` is needed.
+-   `Analytics.event(name, params)` and the `perpetuumTrack` directive for custom events with GA4 names and parameters.
+-   Consent Mode as an option: `consentDefaults` and `Analytics.updateConsent()`.
+-   Specs, linting and builds on every pull request, on Angular 21 and 22.
 
 ### Changed
 
--   Development moved to Angular 22, Vitest and ESLint, with GitHub Actions checking every pull request.
--   The package now lists `@angular/platform-browser`, `@angular/router` and `rxjs` as peer dependencies and supports Angular 21 and 22.
--   README, licence and changelog ship with the package from one place.
+-   Page views carry the full address and the route's title as soon as the router sets it, without a fixed delay.
+-   Supports Angular 21 and 22; `@angular/router` and `rxjs` are peer dependencies.
+-   Licence MIT instead of GPL-3.0.
+
+### Removed
+
+-   `AnalyticsModule`, `AnalyticsService`, the `perpetuumAnalytics` directive and the `I*` config types.
+-   analytics.js (`trackingType: 'analytics'`), since Google retired Universal Analytics.
 
 ## [2.0.20] - 2024-04-11
 
