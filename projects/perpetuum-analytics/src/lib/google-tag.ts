@@ -47,8 +47,9 @@ function installTagManager(document: Document, config: TagManagerConfig): Google
     loadScript(document, `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.containerId)}`)
 
     return {
-        pageView: (view) => dataLayer.push({ event: 'page_view', ...view }),
-        event: (name, params) => dataLayer.push({ event: name, ...params }),
+        pageView: (view) => dataLayer.push({ ...view, event: 'page_view' }),
+        // The name goes last, so a parameter called `event` cannot turn one event into another.
+        event: (name, params) => dataLayer.push({ ...params, event: name }),
         // Tag Manager reads consent from the same gtag commands as gtag.js.
         updateConsent: (choices) => gtag('consent', 'update', choices),
     }
