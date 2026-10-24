@@ -15,8 +15,8 @@ declare const dataLayer: any
 })
 export class AnalyticsService {
     constructor(
-        @Inject(PLATFORM_ID) protected platformId,
-        @Inject(DOCUMENT) private document,
+        @Inject(PLATFORM_ID) protected platformId: object,
+        @Inject(DOCUMENT) private document: Document,
         @Inject('gaConfig') private config: IAnalyticsConfig,
         private router: Router,
         private activatedRoute: ActivatedRoute,

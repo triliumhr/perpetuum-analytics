@@ -1,35 +1,33 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": "./",
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
-        "declaration": false,
-        "downlevelIteration": true,
+        "strict": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "isolatedModules": true,
         "experimentalDecorators": true,
-        "module": "es2020",
-        "moduleResolution": "node",
         "importHelpers": true,
-        "target": "ES2022",
-        "typeRoots": ["node_modules/@types"],
-        "lib": ["es2018", "dom"],
         "paths": {
-            "perpetuum-ng-analytics": [
-                "dist/perpetuum-analytics/perpetuum-analytics",
-                "dist/perpetuum-analytics",
-                "dist/perpetuum-analytics/perpetuum-analytics",
-                "dist/perpetuum-analytics",
-                "dist/perpetuum-analytics/perpetuum-analytics",
-                "dist/perpetuum-analytics"
-            ],
-            "@projects/*": ["projects/*"],
-            "@analytics/*": ["projects/perpetuum-analytics/src/lib/*"],
-            "@node/*": ["node_modules/*"]
+            "perpetuum-analytics": ["./dist/perpetuum-analytics"]
         },
-        "useDefineForClassFields": false
+        "target": "ES2022",
+        "module": "preserve"
     },
     "angularCompilerOptions": {
-        "fullTemplateTypeCheck": true,
-        "strictInjectionParameters": true
-    }
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./projects/perpetuum-analytics/tsconfig.lib.json"
+        },
+        {
+            "path": "./projects/perpetuum-analytics/tsconfig.spec.json"
+        }
+    ]
 }

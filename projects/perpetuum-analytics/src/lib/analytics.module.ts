@@ -3,8 +3,7 @@ import { AnalyticsDirective } from './analytics.directive'
 import { IAnalyticsConfig } from './models/Analytics-config.model'
 
 @NgModule({
-    declarations: [AnalyticsDirective, AnalyticsDirective],
-    imports: [],
+    imports: [AnalyticsDirective],
     exports: [AnalyticsDirective],
 })
 export class AnalyticsModule {

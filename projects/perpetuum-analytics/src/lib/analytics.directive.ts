@@ -6,9 +6,9 @@ import { AnalyticsService } from './analytics.service'
     selector: '[perpetuumAnalytics]',
 })
 export class AnalyticsDirective {
-    @Input() perpetuumAnalytics: IEventData
+    @Input({ required: true }) perpetuumAnalytics!: IEventData
 
-    @HostListener('click', ['$event']) onClick($event) {
+    @HostListener('click') onClick() {
         this.analyticsService.sendEvent(this.perpetuumAnalytics)
     }
 
