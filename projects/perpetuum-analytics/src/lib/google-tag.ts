@@ -1,4 +1,4 @@
-import { AnalyticsConfig, EventParams } from './analytics-config'
+import { AnalyticsConfig, EventParams, GoogleAnalyticsConfig, TagManagerConfig } from './analytics-config'
 
 export interface PageView {
     readonly page_location: string
@@ -14,6 +14,15 @@ export interface GoogleTag {
 type Gtag = (...commands: unknown[]) => void
 
 export function installGoogleTag(document: Document, config: AnalyticsConfig): GoogleTag {
+    switch (config.tag) {
+        case 'gtag':
+            return installGtag(document, config)
+        case 'gtm':
+            return installTagManager(document, config)
+    }
+}
+
+function installGtag(document: Document, config: GoogleAnalyticsConfig): GoogleTag {
     const gtag = gtagOn(document)
     gtag('js', new Date())
     // The router reports every navigation, the first one included; gtag's own page view would count it twice.
@@ -26,11 +35,20 @@ export function installGoogleTag(document: Document, config: AnalyticsConfig): G
     }
 }
 
+function installTagManager(document: Document, config: TagManagerConfig): GoogleTag {
+    const dataLayer = dataLayerOf(windowOf(document))
+    dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
+    loadScript(document, `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.containerId)}`)
+
+    return {
+        pageView: (view) => dataLayer.push({ event: 'page_view', ...view }),
+        event: (name, params) => dataLayer.push({ event: name, ...params }),
+    }
+}
+
 /** The standard gtag() function on the page's data layer, created if the page has none yet. */
 function gtagOn(document: Document): Gtag {
-    const view = document.defaultView
-    if (!view) throw new Error('perpetuum-analytics needs a browser window to load the Google tag.')
-
+    const view = windowOf(document)
     const dataLayer = dataLayerOf(view)
     // gtag.js reads only `arguments` objects from the data layer, not arrays, so this stays a classic function.
     const gtag: Gtag = function () {
@@ -39,6 +57,12 @@ function gtagOn(document: Document): Gtag {
     }
     Reflect.set(view, 'gtag', gtag)
     return gtag
+}
+
+function windowOf(document: Document): Window {
+    const view = document.defaultView
+    if (!view) throw new Error('perpetuum-analytics needs a browser window to load the Google tag.')
+    return view
 }
 
 function dataLayerOf(view: Window): unknown[] {

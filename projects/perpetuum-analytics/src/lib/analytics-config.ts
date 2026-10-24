@@ -7,7 +7,13 @@ export interface GoogleAnalyticsConfig {
     readonly measurementId: string
 }
 
-export type AnalyticsConfig = GoogleAnalyticsConfig
+export interface TagManagerConfig {
+    readonly tag: 'gtm'
+    /** The Google Tag Manager container id, `GTM-…`. */
+    readonly containerId: string
+}
+
+export type AnalyticsConfig = GoogleAnalyticsConfig | TagManagerConfig
 
 /** Parameters of an event, as Google Analytics 4 names them (`value`, `currency`, `items`…). */
 export type EventParams = Readonly<Record<string, unknown>>
