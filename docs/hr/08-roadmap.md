@@ -7,19 +7,19 @@ summary: Što dolazi u Perpetuum Analyticsu i kako podržavamo verzije Angulara.
 
 # Plan razvoja
 
-Svaka stavka postaje GitHub issue u svojoj prekretnici, a svako izdanje u changelogu navodi što je donijelo. Ideje i glasovi su dobrodošli u [GitHub issueima](https://github.com/triliumhr/perpetuum-analytics/issues).
+Svaka stavka postaje GitHub issue u svojoj prekretnici, a svako izdanje u changelogu navodi što je donijelo. Ideje i glasovi su dobrodošli u [GitHub issueima](https://github.com/triliumhr/perpetuum-analytics/issues). Kvartali su ciljevi; [vremenska crta](https://github.com/orgs/triliumhr/projects/3/views/2) ih pokazuje na jednom mjestu.
 
-## Sad: 3.0
+## Sad: 3.0, 4. kvartal 2026.
 
 GA4 i Google Tag Manager sigurni uz SSR, s `provideAnalytics()`, vlastitim eventima, Consent Modeom v2, 100 % pokrivenosti i end-to-end testom SSR-a na svakom pull requestu. Vidi [Kako testiramo](kako-testiramo).
 
-## Sljedeće: 3.1, privatnost i strogi webovi
+## Sljedeće: 3.1, privatnost i strogi webovi, 4. kvartal 2026.
 
 - **CSP nonce:** skripta Google taga nosi Angularov `CSP_NONCE`, pa web sa strogim Content Security Policyjem ne treba iznimku za cijeli host.
 - **Čiste adrese:** opcija `pageLocation` koja uklanja parametre upita ili maskira dijelove puta prije nego odu Googleu, npr. e-mail u `?email=` ili broj narudžbe u `/narudzbe/:id`.
 - **Start nakon privole:** `start: 'manual'` i `analytics.start()`, pa se ništa ne učitava dok posjetitelj ne pristane, za webove koji to biraju umjesto [Consent Modea](consent-mode).
 
-## Zatim: 3.2, bogatije mjerenje
+## Zatim: 3.2, bogatije mjerenje, 1. kvartal 2027.
 
 - **Tipizirani GA4 eventi:** preporučeni eventi i eventi webshopa (`purchase`, `add_to_cart`, `begin_checkout`…) s tipiziranim parametrima i `items`.
 - **ID korisnika i korisnička svojstva** za prijavljene posjetitelje.

@@ -7,19 +7,19 @@ summary: What comes next for Perpetuum Analytics and how Angular versions are su
 
 # Roadmap
 
-Each item becomes a GitHub issue under its milestone, and each release lists what it delivered in the changelog. Ideas and votes are welcome in [GitHub issues](https://github.com/triliumhr/perpetuum-analytics/issues).
+Each item becomes a GitHub issue under its milestone, and each release lists what it delivered in the changelog. Ideas and votes are welcome in [GitHub issues](https://github.com/triliumhr/perpetuum-analytics/issues). The quarters are targets; the [timeline](https://github.com/orgs/triliumhr/projects/3/views/2) shows them on one page.
 
-## Now: 3.0
+## Now: 3.0, Q4 2026
 
 SSR-safe GA4 and Google Tag Manager with `provideAnalytics()`, custom events, Consent Mode v2, 100 % coverage and an end-to-end SSR test on every pull request. See [How we test](testing).
 
-## Next: 3.1, privacy and strict sites
+## Next: 3.1, privacy and strict sites, Q4 2026
 
 - **CSP nonce:** the Google tag script carries Angular's `CSP_NONCE`, so sites with a strict Content Security Policy need no host-wide exception.
 - **Clean addresses:** a `pageLocation` option that removes query parameters or masks parts of the path before they reach Google, e.g. an e-mail in `?email=` or an order id in `/orders/:id`.
 - **Start after consent:** `start: 'manual'` and `analytics.start()`, so nothing loads until the visitor agrees, for sites that choose this over [Consent Mode](consent-mode).
 
-## Then: 3.2, richer measurement
+## Then: 3.2, richer measurement, Q1 2027
 
 - **Typed GA4 events:** recommended and ecommerce events (`purchase`, `add_to_cart`, `begin_checkout`…) with typed parameters and `items`.
 - **User id and user properties** for signed-in visitors.
