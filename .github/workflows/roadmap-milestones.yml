@@ -1,0 +1,36 @@
+# One-off: creates the roadmap milestones and files the roadmap issues under them. Removed in the next commit.
+name: Roadmap milestones
+
+on:
+    push:
+        branches: [claude/project-thread-g8m6i1]
+        paths: [.github/workflows/roadmap-milestones.yml]
+
+permissions:
+    issues: write
+
+jobs:
+    milestones:
+        runs-on: ubuntu-latest
+        env:
+            GH_TOKEN: ${{ github.token }}
+            GH_REPO: ${{ github.repository }}
+        steps:
+            - name: Create milestones
+              run: |
+                  create() {
+                      if gh api "repos/$GH_REPO/milestones?state=all" --jq '.[].title' | grep -qx "$1"; then
+                          echo "$1 exists"
+                      else
+                          gh api "repos/$GH_REPO/milestones" -f title="$1" -f description="$2" >/dev/null && echo "$1 created"
+                      fi
+                  }
+                  create '3.1' 'Privacy and strict sites: CSP nonce, clean addresses, start after consent.'
+                  create '3.2' 'Richer measurement: typed GA4 events, user id and properties, debug mode, route data.'
+                  create 'Later' 'Under consideration: votes and use cases welcome.'
+            - name: File issues
+              run: |
+                  file() { for issue in "${@:2}"; do gh issue edit "$issue" --milestone "$1"; done; }
+                  file '3.1' 28 42 43 44
+                  file '3.2' 45 46 47 48
+                  file 'Later' 49 50 51
