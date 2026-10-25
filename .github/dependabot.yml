@@ -1,16 +1,26 @@
+# Weekly dependency updates, grouped so one review covers a whole toolchain.
 version: 2
 updates:
     - package-ecosystem: npm
       directory: /
       schedule:
-          interval: monthly
+          interval: weekly
+          day: monday
+          time: '06:00'
+          timezone: Europe/Zagreb
+      open-pull-requests-limit: 5
       groups:
           angular:
-              patterns: ['@angular/*', '@angular-eslint/*', 'angular-eslint', 'ng-packagr']
+              patterns: ['@angular/*', '@angular-devkit/*', 'ng-packagr', 'angular-eslint', '@angular-eslint/*']
           tooling:
               patterns: ['*']
-              exclude-patterns: ['@angular/*', '@angular-eslint/*', 'angular-eslint', 'ng-packagr']
+              exclude-patterns: ['@angular/*', '@angular-devkit/*', 'ng-packagr', 'angular-eslint', '@angular-eslint/*']
+      # A new Angular major changes the supported range, so it is prepared by hand with the support matrix.
+      ignore:
+          - dependency-name: '@angular/*'
+            update-types: ['version-update:semver-major']
     - package-ecosystem: github-actions
       directory: /
       schedule:
           interval: monthly
+          timezone: Europe/Zagreb

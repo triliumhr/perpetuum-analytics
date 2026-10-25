@@ -135,6 +135,14 @@ GitHub Actions runs the same checks on every pull request, the specs also on Ang
 2. `npm version <major|minor|patch> --no-git-tag-version` in `projects/perpetuum-analytics`, commit, then `git tag v<version>` and push the tag.
 3. The Release workflow checks everything again and publishes to npm through Trusted Publishing, with provenance.
 
+## Maintenance
+
+- **Every week:** Dependabot groups dependency updates, CI runs all checks on `main` against the latest releases, and open security alerts and `npm audit` are reviewed.
+- **Every month:** new Angular, TypeScript and Node.js releases and GitHub Actions versions are checked against the support policy, and open issues and pull requests are answered.
+- **Every quarter:** a security review of the code, the release workflow and npm publishing, and a review of the roadmap.
+
+Every change from maintenance comes as a pull request with the same checks as any other.
+
 ## Roadmap
 
 What comes next and how Angular versions are supported: [ROADMAP.md](ROADMAP.md).

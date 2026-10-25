@@ -4,6 +4,10 @@ on:
     push:
         branches: [main]
     pull_request:
+    # Weekly run on main catches a new Angular, Google or toolchain release that breaks the package before users do.
+    schedule:
+        - cron: '17 5 * * 1'
+    workflow_dispatch:
 
 permissions:
     contents: read
