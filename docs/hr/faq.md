@@ -15,6 +15,8 @@ Da, zbog toga je i nastao. Na serveru ne radi ništa, a u pregledniku kreće nak
 
 Google Analytics i sam broji promjene povijesti preglednika. U postavkama Enhanced measurement web streama isključi **Page changes based on browser history events**, kao u [Početku](pocetak#jedna-postavka-u-google-analyticsu). Uz Tag Manager provjeri i da je isječak iz `index.html` maknut.
 
+Googleu može trebati sat ili više da promjenu primijeni na tag koji poslužuje, pa drugi prikaz stranice može još neko vrijeme stizati i nakon spremanja. Razlikuješ ih na kartici Network: prikaz stranice iz paketa nosi `_ee=1`, a onaj iz promjena povijesti stiže nekoliko sekundi kasnije, bez toga.
+
 ### Radi li s NgModulima?
 
 Da. Stavi `provideAnalytics()` u `providers` glavnog modula, a `TrackEvent` u `imports` modula koji koristi direktivu.

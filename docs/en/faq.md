@@ -15,6 +15,8 @@ Yes, that is what it was built for. On the server it does nothing; in the browse
 
 Google Analytics also counts history changes by itself. Turn off **Page changes based on browser history events** in the enhanced measurement settings of the web stream, as in [Getting started](getting-started#one-setting-in-google-analytics). With Tag Manager, also check that the `index.html` snippet is gone.
 
+Google can take an hour or more to apply the change to the tag it serves, so the second page view may keep arriving for a while after you save. You can tell the two apart in the network tab: the package's page view carries `_ee=1`, while the one from history events comes a few seconds later without it.
+
 ### Does it work with NgModules?
 
 Yes. Put `provideAnalytics()` in the `providers` of the root module and add `TrackEvent` to the `imports` of the module that uses the directive.
