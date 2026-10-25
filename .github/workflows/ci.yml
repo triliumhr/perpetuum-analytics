@@ -1,0 +1,65 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+    # Weekly run on main catches a new Angular, Google or toolchain release that breaks the package before users do.
+    schedule:
+        - cron: '17 5 * * 1'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    check:
+        name: Lint, test and build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+                  cache: npm
+            - run: npm ci
+            - run: npm run format:check
+            - run: npm run lint
+            - run: npm test
+            - run: npm run pack:check
+
+    # The package promises Angular ^21 || ^22 to its users, so the specs also run on the older major.
+    # Angular 21 needs its own build tools and TypeScript 5.9, hence the matching set.
+    angular-21:
+        name: Tests on Angular 21
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+                  cache: npm
+            - run: npm ci
+            - run: >
+                  npm install --no-save
+                  @angular/build@^21 @angular/cli@^21 @angular/common@^21 @angular/compiler@^21
+                  @angular/compiler-cli@^21 @angular/core@^21 @angular/platform-browser@^21 @angular/router@^21
+                  ng-packagr@^21 typescript@~5.9 vitest@^4
+                  @angular/platform-server@^21 @angular/ssr@^21 @vitest/coverage-v8@^4
+            - run: npm test
+            - run: npm run build
+
+    # The demo app is rendered by a real Express server with Angular SSR and driven in Chromium.
+    e2e:
+        name: End-to-end in Chromium with SSR
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+                  cache: npm
+            - run: npm ci
+            - run: npx playwright install --with-deps chromium
+            - run: npm run build:demo
+            - run: npm run e2e

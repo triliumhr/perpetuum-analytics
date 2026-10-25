@@ -1,95 +1,158 @@
-# Perpetuum Ng Analytics
+# &lt;perpetuum-analytics /&gt;
 
-[![](https://img.shields.io/badge/version-1.1.4-green.svg)](https://perpetuum.eu)
-[![](https://img.shields.io/badge/Angular-7+-informational.svg)](https://angular.io)
+SSR-safe Google Analytics 4 and Google Tag Manager for Angular.
 
-![PerpetuumNgAnalytics](https://repository-images.githubusercontent.com/239224377/1e536b00-4b7d-11ea-8f95-3681c51d54bd)
+On the server it stays quiet: no `window`, no script, no data layer, so server-side rendering and hydration run as if analytics were not there. In the browser one provider loads the tag and sends a page view after every navigation.
 
-## About
+Works with Angular 21 and 22: standalone or NgModule apps, with or without zone.js, with or without server-side rendering.
 
-This is Angular module that enables easy Google Analytics integration into Angular SPA-s, and most importantly it is 100% SSR compatible, so you can use it even if you are running Angular Universal, it won't break the server side rendering.
+Full guide with how-to examples and a FAQ, in English and Croatian: [`docs/`](docs).
 
-Tracking is possible using any script provided by Google Analytics, but we recommend using [global site tag](<https://developers.google.com/analytics/devguides/collection/gtagjs#:~:text=The%20global%20site%20tag%20(gtag,non%2Dproduct%20specific)%20gtag.>) (gtag.js)
+## Installation
 
-Tested with Angular 7+ although it might work with older versions as well.
-
-## Google Analytics 4 support
-
-You can use this module with the GA4, but you have to use [global site tag](<https://developers.google.com/analytics/devguides/collection/gtagjs#:~:text=The%20global%20site%20tag%20(gtag,non%2Dproduct%20specific)%20gtag.>) (gtag.js)
-If you are already using this module with Universal Analytics, follow the [migration guide](https://support.google.com/analytics/answer/10759417?hl=en), make sure to instantiate the perpetuum-analytics module using gtag as trackingType
-
-Congrats, you are good to go, everything else can stay the same.
-
-## Installation and configuration
-
--   Install package using npm `npm i perpetuum-analytics`
--   in your app.module.ts add Module to imports array:
-
-```javascript
-import { ITrackingType, AnalyticsModule } from 'perpetuum-analytics'
-
-...
-
-constructor(
-    private analyticsService: AnalyticsService
-) {}
-
-...
-
-imports: [
-    ...
-    AnalyticsModule.forRoot({
-        trackingId: <YOUR TRACKING ID>,
-        trackingType: 'gtag',
-    }),
-],
+```bash
+npm install @triliumhr/perpetuum-analytics
 ```
 
-Replace <YOUR TRACKING ID> with Google Analytics ID ([Find your Analytics tracking id](https://support.google.com/analytics/answer/1008080?hl=en))
-Supported tracking types are 'analytics', 'gtag' or 'gtm'.
+## Google Analytics 4
 
--   in your app.component.ts initialize tracking like this:
+Add the provider with your measurement id (`G-…`):
 
-```javascript
-import { AnalyticsService } from 'perpetuum-analytics'
+```ts
+// app.config.ts
+import { provideAnalytics } from '@triliumhr/perpetuum-analytics'
 
-...
-
-ngOnInit(): void {
-   this.analyticsService.setGoogleAnalyticsScripts()
+export const appConfig: ApplicationConfig = {
+    providers: [provideRouter(routes), provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX' })],
 }
 ```
 
-Note that we need to pass a reference to renderer as a param
+That is all. When the app starts in the browser, gtag.js loads once and every navigation sends one `page_view` with the full address and the route's title.
 
-If you are in EU and need to be GDPR-compliant, you can first check if you have user permission to use analytics, and initialize module conditionally.
+One setting in Google Analytics keeps each navigation counted once: in Admin › Data streams › your web stream › Enhanced measurement › Page views › Show advanced settings, untick **Page changes based on browser history events**. The package already sends those page views.
 
-This method will generate tracking script, and it will initialize tracking, you are all set. Every route change will send event to Google Analytics.
+## Google Tag Manager
 
-## Sending custom click events using directive
-
-PerpetuumAnalytics module provides directive, so you can easily send custom events for any element in your application
-
-Let's say tact we have "Add to cart" button, and we would like to track user interactions. We can easily bind a directive to any element and send custom event whenever user clicks on our button
-
-```html
-<button
-    [perpetuumAnalytics]="{ eventCategory: 'Sample category', eventAction: 'Add to cart click', eventLabel: 'item.name', eventValue: item.price }"
-    (click)="addToCart(item)"
->
-    Add to cart
-</button>
+```ts
+provideAnalytics({ tag: 'gtm', containerId: 'GTM-XXXXXXX' })
 ```
 
-Here we are binding directive to our button, and we are passing event data object as argument to our directive
+The container loads with the `gtm.js` event. Page views arrive in the data layer as `page_view` events, and custom events under their own names, ready for the tags you set up in the container.
 
-## Issues
+## Custom events
 
-For any known issues check list of opened [issues](https://github.com/nrozic/perpetuum-ng-analytics/issues) and if you find any issue with this module, please consider opening an [issue](https://github.com/nrozic/perpetuum-ng-analytics/issues/new) with description
+From a template, with the `perpetuumTrack` directive:
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
+```html
+<button type="button" perpetuumTrack="add_to_cart" [perpetuumTrackParams]="{ currency: 'EUR', value: item.price }">Add to cart</button>
+```
 
-## Potential breaking changes from version 2.0.0
+```ts
+import { TrackEvent } from '@triliumhr/perpetuum-analytics'
 
-You don't have to pass renderer2 as param from the component when calling setGoogleAnalyticsScripts method in analytics service.
-Method argument is deprecated and can/will be removed in future versions
+@Component({ imports: [TrackEvent] /* … */ })
+```
+
+From code:
+
+```ts
+inject(Analytics).event('sign_up', { method: 'email' })
+```
+
+Event names and parameters are the ones Google Analytics 4 uses (`add_to_cart`, `purchase`, `value`, `currency`, `items`…).
+
+## Consent Mode
+
+If your site uses Google Consent Mode, give the defaults in the config and pass on the visitor's choice when your cookie banner reports it:
+
+```ts
+provideAnalytics({
+    tag: 'gtag',
+    measurementId: 'G-XXXXXXXXXX',
+    consentDefaults: { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' },
+})
+
+inject(Analytics).updateConsent({ analytics_storage: 'granted' })
+```
+
+The defaults reach Google before any other command. Without `consentDefaults`, nothing about consent is sent.
+
+## Server-side rendering
+
+This is why the package exists. On the server the provider does nothing: it never reads `window` or `document.defaultView`, adds no script and sends no events, so the rendered HTML is the same with or without analytics. Everything starts once the app runs in the browser, and the first navigation there sends the first page view.
+
+## How it is tested
+
+Every pull request and every release runs the same checks, and a release is published only from a version tag after they pass:
+
+| Check                                        | What it proves                                                                                                                                           |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vitest specs with 100 % coverage             | every line and branch of the package runs in a spec; the build fails below 100 %                                                                         |
+| Rendering through `@angular/platform-server` | the server HTML has no Google script and no data layer                                                                                                   |
+| End-to-end in Chromium                       | a demo app with Angular SSR on Express: complete server HTML, hydration, one script load, one page view per navigation, events, consent, a clean console |
+| Angular 21 and 22                            | the specs run on both supported versions                                                                                                                 |
+| NgModule and zoneless apps                   | both setups have their own specs                                                                                                                         |
+| Lint, format, `publint`                      | code and package follow the rules                                                                                                                        |
+
+No test talks to Google: every request to Google is answered locally. Each behaviour starts as a failing spec committed before the code, so the history shows the order. npm publishes with provenance, which ties the package to the exact commit and workflow run.
+
+## Moving from 2.x
+
+Version 3 is a new package name and a smaller API.
+
+| 2.x                                                                                  | 3.x                                                                |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `npm i perpetuum-analytics`                                                          | `npm i @triliumhr/perpetuum-analytics`                             |
+| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`                      | `provideAnalytics({ tag: 'gtag', measurementId })`                 |
+| `trackingType: 'gtm'` with your own snippet                                          | `provideAnalytics({ tag: 'gtm', containerId })`, no snippet needed |
+| `analytics.setGoogleAnalyticsScripts()` in `AppComponent`                            | nothing, the provider starts on its own                            |
+| `analyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                    |
+| `[perpetuumAnalytics]="{ … }"`                                                       | `perpetuumTrack="name"` with `[perpetuumTrackParams]`              |
+| `trackingType: 'analytics'` (analytics.js)                                           | not supported, Google retired Universal Analytics                  |
+
+If you called `setGoogleAnalyticsScripts()` only after consent, either add the provider at that point (lazy route or `bootstrapApplication` after the choice) or use Consent Mode.
+
+Version 2.x stays on npm under `perpetuum-analytics` and keeps working.
+
+## Development
+
+An Angular CLI workspace with the library in `projects/perpetuum-analytics`. You need Node.js 22.22.3 or 24.15 and newer.
+
+```bash
+npm ci
+npm test            # Vitest specs with 100 % coverage
+npm run lint        # ESLint with angular-eslint
+npm run build       # the package in dist/perpetuum-analytics
+npm run pack:check  # build, npm pack --dry-run and publint
+npm run build:demo && npm run e2e  # SSR demo app, end-to-end in Chromium
+```
+
+GitHub Actions runs the same checks on every pull request, the specs also on Angular 21, and the end-to-end test on the SSR demo.
+
+### Releasing
+
+1. Add the version to `CHANGELOG.md`.
+2. `npm version <major|minor|patch> --no-git-tag-version` in `projects/perpetuum-analytics`, commit, then `git tag v<version>` and push the tag.
+3. The Release workflow checks everything again and publishes to npm through Trusted Publishing, with provenance.
+
+## Maintenance
+
+- **Every week:** Dependabot groups dependency updates, CI runs all checks on `main` against the latest releases, and open security alerts and `npm audit` are reviewed.
+- **Every month:** new Angular, TypeScript and Node.js releases and GitHub Actions versions are checked against the support policy, and open issues and pull requests are answered.
+- **Every quarter:** a security review of the code, the release workflow and npm publishing, and a review of the roadmap.
+
+Every change from maintenance comes as a pull request with the same checks as any other.
+
+## Roadmap
+
+What comes next and how Angular versions are supported: [ROADMAP.md](ROADMAP.md).
+
+## Questions and ideas
+
+Open an [issue](https://github.com/triliumhr/perpetuum-analytics/issues) and describe what you would like the package to do.
+
+## Licence
+
+[MIT](LICENSE.md) from 3.0.0. Versions up to 2.0.20 were published under GPL-3.0.
+
+Made by [Trilium](https://trilium.io).

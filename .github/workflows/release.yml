@@ -1,0 +1,32 @@
+name: Release
+
+# A version tag (v3.0.0) publishes that version to npm. npm trusts this workflow through Trusted Publishing,
+# so the repository holds no npm token, and every version carries a provenance statement.
+on:
+    push:
+        tags: ['v*']
+
+permissions:
+    contents: read
+    id-token: write
+
+jobs:
+    publish:
+        name: Publish to npm
+        runs-on: ubuntu-latest
+        environment: npm
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+                  cache: npm
+                  registry-url: https://registry.npmjs.org
+            - run: npm ci
+            - run: npm run lint
+            - run: npm test
+            - run: npm run pack:check
+            - name: The tag matches the package version
+              run: test "v$(node -p "require('./projects/perpetuum-analytics/package.json').version")" = "$GITHUB_REF_NAME"
+            - run: npm publish --provenance --access public
+              working-directory: dist/perpetuum-analytics

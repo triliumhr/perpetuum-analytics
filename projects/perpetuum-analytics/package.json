@@ -1,36 +1,43 @@
 {
-  "name": "perpetuum-analytics",
-  "description": "Google Analytics module for Angular. This module is SSR compatible and can be used in Angular Universal applications",
-  "version": "2.0.20",
-  "author": {
-    "name": "Nikola Rožić",
-    "email": "nikola@trilium.io",
-    "url": "https://trilium.io/"
-  },
-  "license": "(GPL-3.0)",
-  "keywords": [
-    "angular",
-    "SSR",
-    "Angular Universal",
-    "Google Analytics",
-    "Google Analytics v4",
-    "gtag.js Angular"
-  ],
-  "homepage": "https://github.com/nrozic/perpetuum-ng-analytics",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nrozic/perpetuum-ng-analytics.git"
-  },
-  "dependencies": {
-    "tslib": "^2.0.0"
-  },
-  "peerDependencies": {
-    "@angular/common": ">=8.2.14",
-    "@angular/core": ">=8.2.14"
-  },
-  "gitHead": "6d4bcaadc425d30980302b21a409d6ea5e3498a7",
-  "scripts": {
-    "lib:build": "ng build perpetuum-analytics && npm run lib:package",
-    "lib:package": "cd ../../dist/perpetuum-analytics && npm pack"
-  }
+    "name": "@triliumhr/perpetuum-analytics",
+    "description": "SSR-safe Google Analytics 4 and Google Tag Manager for Angular: quiet on the server, a page view on every navigation in the browser.",
+    "version": "3.0.0",
+    "author": {
+        "name": "Nikola Rožić",
+        "email": "nikola@trilium.io",
+        "url": "https://trilium.io/"
+    },
+    "license": "MIT",
+    "keywords": [
+        "angular",
+        "google analytics",
+        "ga4",
+        "gtag",
+        "google tag manager",
+        "gtm",
+        "consent mode",
+        "ssr"
+    ],
+    "homepage": "https://github.com/triliumhr/perpetuum-analytics#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triliumhr/perpetuum-analytics.git"
+    },
+    "dependencies": {
+        "tslib": "^2.3.0"
+    },
+    "peerDependencies": {
+        "@angular/common": "^21.0.0 || ^22.0.0",
+        "@angular/core": "^21.0.0 || ^22.0.0",
+        "@angular/router": "^21.0.0 || ^22.0.0",
+        "rxjs": "^7.4.0"
+    },
+    "sideEffects": false,
+    "bugs": {
+        "url": "https://github.com/triliumhr/perpetuum-analytics/issues"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    }
 }

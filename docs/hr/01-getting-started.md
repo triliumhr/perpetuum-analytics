@@ -1,0 +1,58 @@
+---
+title: Početak
+slug: pocetak
+order: 1
+summary: Instaliraj paket, dodaj jedan provider i vidi prvi prikaz stranice u Google Analyticsu 4.
+---
+
+# Početak
+
+Perpetuum Analytics povezuje Angular aplikaciju s Google Analyticsom 4 ili Google Tag Managerom. Siguran je uz renderiranje na serveru (SSR): na serveru ne radi ništa, a u pregledniku učita tag i nakon svake navigacije pošalje prikaz stranice.
+
+## Što treba
+
+- Angular 21 ili 22, standalone ili s NgModulima
+- Angular router, za automatske prikaze stranica
+- GA4 ID mjerenja (`G-…`) ili ID Tag Manager spremnika (`GTM-…`)
+
+## Instalacija
+
+```bash
+npm install @triliumhr/perpetuum-analytics
+```
+
+## Dodaj provider
+
+```ts
+// app.config.ts
+import { ApplicationConfig } from '@angular/core'
+import { provideRouter } from '@angular/router'
+import { provideAnalytics } from '@triliumhr/perpetuum-analytics'
+
+import { routes } from './app.routes'
+
+export const appConfig: ApplicationConfig = {
+    providers: [provideRouter(routes), provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX' })],
+}
+```
+
+To je cijelo postavljanje. U `index.html` ne dodaješ ništa i ništa ne pozivaš iz komponente.
+
+## Jedna postavka u Google Analyticsu
+
+Paket sam šalje prikaz stranice za svaku navigaciju, s naslovom nove rute. Google Analytics zna i sam brojati promjene povijesti preglednika, pa bi svaku navigaciju brojao dvaput. Isključi to jednom:
+
+1. Google Analytics › Admin › Data streams › tvoj web stream
+2. Enhanced measurement › ikona zupčanika
+3. Page views › Show advanced settings › makni kvačicu s **Page changes based on browser history events** › Save
+
+## Provjeri da radi
+
+Otvori aplikaciju, pa Google Analytics › Reports › Realtime. Svaka navigacija se vidi kao `page_view` s naslovom stranice. Za detaljniji pogled koristi [DebugView](cesta-pitanja#kako-vidim-evente-dok-razvijam).
+
+## Dalje
+
+- [Vlastiti eventi](dogadaji), npr. `add_to_cart` i `sign_up`
+- [Google Tag Manager](tag-manager) umjesto gtag.js
+- [Consent Mode](consent-mode)
+- [Zašto je siguran uz SSR](ssr)
