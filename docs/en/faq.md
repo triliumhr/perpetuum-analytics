@@ -1,7 +1,7 @@
 ---
 title: FAQ
 slug: faq
-order: 8
+order: 9
 summary: Short answers to the questions people ask most.
 ---
 

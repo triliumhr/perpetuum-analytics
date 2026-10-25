@@ -135,6 +135,10 @@ GitHub Actions runs the same checks on every pull request, the specs also on Ang
 2. `npm version <major|minor|patch> --no-git-tag-version` in `projects/perpetuum-analytics`, commit, then `git tag v<version>` and push the tag.
 3. The Release workflow checks everything again and publishes to npm through Trusted Publishing, with provenance.
 
+## Roadmap
+
+What comes next and how Angular versions are supported: [ROADMAP.md](ROADMAP.md).
+
 ## Questions and ideas
 
 Open an [issue](https://github.com/triliumhr/perpetuum-analytics/issues) and describe what you would like the package to do.

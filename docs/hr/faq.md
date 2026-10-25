@@ -1,7 +1,7 @@
 ---
 title: Česta pitanja
 slug: cesta-pitanja
-order: 8
+order: 9
 summary: Kratki odgovori na pitanja koja se najčešće postavljaju.
 ---
 
