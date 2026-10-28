@@ -14,24 +14,25 @@ export interface GoogleTag {
 
 type Gtag = (...commands: unknown[]) => void
 
-export function installGoogleTag(document: Document, config: AnalyticsConfig): GoogleTag {
+/** `nonce` is the app's CSP_NONCE, so a strict Content Security Policy lets the tag's script run. */
+export function installGoogleTag(document: Document, config: AnalyticsConfig, nonce: string | null): GoogleTag {
     // Consent Mode needs the defaults on the data layer before the tag's first command.
     if (config.consentDefaults) gtagOn(document)('consent', 'default', config.consentDefaults)
 
     switch (config.tag) {
         case 'gtag':
-            return installGtag(document, config)
+            return installGtag(document, config, nonce)
         case 'gtm':
-            return installTagManager(document, config)
+            return installTagManager(document, config, nonce)
     }
 }
 
-function installGtag(document: Document, config: GoogleAnalyticsConfig): GoogleTag {
+function installGtag(document: Document, config: GoogleAnalyticsConfig, nonce: string | null): GoogleTag {
     const gtag = gtagOn(document)
     gtag('js', new Date())
     // The router reports every navigation, the first one included; gtag's own page view would count it twice.
     gtag('config', config.measurementId, { send_page_view: false })
-    loadScript(document, `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(config.measurementId)}`)
+    loadScript(document, `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(config.measurementId)}`, nonce)
 
     return {
         pageView: (view) => gtag('event', 'page_view', view),
@@ -40,11 +41,11 @@ function installGtag(document: Document, config: GoogleAnalyticsConfig): GoogleT
     }
 }
 
-function installTagManager(document: Document, config: TagManagerConfig): GoogleTag {
+function installTagManager(document: Document, config: TagManagerConfig, nonce: string | null): GoogleTag {
     const gtag = gtagOn(document)
     const dataLayer = dataLayerOf(windowOf(document))
     dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
-    loadScript(document, `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.containerId)}`)
+    loadScript(document, `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.containerId)}`, nonce)
 
     return {
         pageView: (view) => dataLayer.push({ ...view, event: 'page_view' }),
@@ -83,9 +84,10 @@ function dataLayerOf(view: Window): unknown[] {
     return dataLayer
 }
 
-function loadScript(document: Document, src: string): void {
+function loadScript(document: Document, src: string, nonce: string | null): void {
     const script = document.createElement('script')
     script.async = true
     script.src = src
+    if (nonce) script.nonce = nonce
     document.head.appendChild(script)
 }

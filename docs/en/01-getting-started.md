@@ -50,6 +50,26 @@ The package sends a page view for every navigation itself, with the title of the
 
 Open the app, then Google Analytics › Reports › Realtime. Every navigation shows as a `page_view` with the page title. For a closer look, use [DebugView](faq#how-do-i-see-events-while-developing).
 
+## Strict Content Security Policy
+
+_Since 3.1_
+
+With a nonce-based Content Security Policy, the Google tag script carries the page's nonce, so `script-src` needs no Google host. Give Angular the nonce the way it reads it anyway: the server writes it into the app's root element, next to the same nonce in the `Content-Security-Policy` header.
+
+```html
+<app-root ngCspNonce="…"></app-root>
+```
+
+Angular reads `ngCspNonce` as `CSP_NONCE`, and the script that `provideAnalytics()` adds gets it. Providing `CSP_NONCE` yourself works the same way. The nonce is new for every response, so it always comes from the server, never from the code of the app.
+
+A policy that works with gtag.js:
+
+```text
+script-src 'self' 'nonce-…'; connect-src https://*.google-analytics.com https://*.googletagmanager.com; img-src https://*.google-analytics.com https://*.googletagmanager.com
+```
+
+Without `CSP_NONCE` the script carries no nonce, as before. Tags that a Tag Manager container adds itself follow Google's own guide for Content Security Policy with Tag Manager.
+
 ## Next
 
 - [Custom events](events) such as `add_to_cart` and `sign_up`

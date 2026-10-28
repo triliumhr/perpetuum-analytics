@@ -1,5 +1,6 @@
 import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResponseToNodeResponse } from '@angular/ssr/node'
 import express from 'express'
+import { randomBytes } from 'node:crypto'
 import { join } from 'node:path'
 
 const browserDistFolder = join(import.meta.dirname, '../browser')
@@ -37,9 +38,34 @@ app.use(
 app.use((req, res, next) => {
     angularApp
         .handle(req)
-        .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+        .then(async (response) => (response ? writeResponseToNodeResponse(await withNoncePolicy(response), res) : next()))
         .catch(next)
 })
+
+/**
+ * Every page gets a fresh nonce and a strict Content Security Policy: scripts run only from this origin
+ * or with the nonce. index.html carries `ngCspNonce="demo-csp-nonce"`, which Angular reads as CSP_NONCE,
+ * so the Google tag loads through the nonce alone, with no Google host in script-src.
+ */
+async function withNoncePolicy(response: Response): Promise<Response> {
+    if (!response.headers.get('content-type')?.includes('text/html')) return response
+
+    const nonce = randomBytes(16).toString('base64')
+    const headers = new Headers(response.headers)
+    headers.delete('content-length')
+    headers.set(
+        'content-security-policy',
+        [
+            `script-src 'self' 'nonce-${nonce}'`,
+            `style-src 'self' 'nonce-${nonce}'`,
+            'connect-src https://*.google-analytics.com https://*.googletagmanager.com',
+            "object-src 'none'",
+            "base-uri 'self'",
+        ].join('; ')
+    )
+    const html = (await response.text()).replaceAll('demo-csp-nonce', nonce)
+    return new Response(html, { status: response.status, headers })
+}
 
 /**
  * Start the server if this module is the main entry point, or it is ran via PM2.

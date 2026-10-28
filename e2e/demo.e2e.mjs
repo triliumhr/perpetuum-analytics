@@ -35,9 +35,9 @@ async function openApp(path) {
         googleRequests.push(route.request().url())
         return route.fulfill({ contentType: 'text/javascript', body: '' })
     })
-    await page.goto(origin + path)
+    const response = await page.goto(origin + path)
     await page.waitForFunction(() => Array.isArray(window.dataLayer) && window.dataLayer.length > 3)
-    return { page, googleRequests, problems }
+    return { page, response, googleRequests, problems }
 }
 
 function dataLayerOf(page) {
@@ -45,6 +45,12 @@ function dataLayerOf(page) {
         window.dataLayer.map((entry) => (Object.prototype.toString.call(entry) === '[object Arguments]' ? Array.from(entry) : entry))
     )
 }
+
+const directive = (policy, name) =>
+    policy
+        .split(';')
+        .map((part) => part.trim())
+        .find((part) => part.startsWith(`${name} `))
 
 const events = (dataLayer, name) => dataLayer.filter((entry) => entry[0] === 'event' && entry[1] === name)
 
@@ -103,6 +109,20 @@ describe('demo app with server-side rendering', () => {
         assert.deepEqual(events(dataLayer, 'add_to_cart'), [['event', 'add_to_cart', { currency: 'EUR', value: 12.5 }]])
         assert.deepEqual(dataLayer.at(-1), ['consent', 'update', { analytics_storage: 'granted' }])
         assert.deepEqual(problems, [])
+        await page.close()
+    })
+
+    it('loads gtag.js under a nonce-based Content Security Policy, without a Google host in script-src', async () => {
+        const { page, response, googleRequests, problems } = await openApp('/shop')
+        const scriptPolicy = directive(response.headers()['content-security-policy'] ?? '', 'script-src') ?? ''
+        const [, nonce] = scriptPolicy.match(/'nonce-([^']+)'/) ?? []
+
+        assert.ok(nonce, `script-src carries a nonce: ${scriptPolicy}`)
+        assert.doesNotMatch(scriptPolicy, /google/)
+        const tagNonce = await page.evaluate(() => document.querySelector('script[src*="googletagmanager.com"]')?.nonce)
+        assert.equal(tagNonce, nonce)
+        assert.deepEqual(googleRequests, ['https://www.googletagmanager.com/gtag/js?id=G-DEMO000000'])
+        assert.deepEqual(problems, [], 'the browser reports no Content Security Policy violation')
         await page.close()
     })
 })

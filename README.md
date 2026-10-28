@@ -77,6 +77,16 @@ inject(Analytics).updateConsent({ analytics_storage: 'granted' })
 
 The defaults reach Google before any other command. Without `consentDefaults`, nothing about consent is sent.
 
+## Content Security Policy
+
+With a nonce-based policy, the Google tag script carries Angular's `CSP_NONCE` (since 3.1). The usual way is `ngCspNonce` on the root element, written by the server with the same nonce as in the `Content-Security-Policy` header:
+
+```html
+<app-root ngCspNonce="…"></app-root>
+```
+
+`script-src` then needs no Google host. See [Strict Content Security Policy](docs/en/01-getting-started.md#strict-content-security-policy).
+
 ## Server-side rendering
 
 This is why the package exists. On the server the provider does nothing: it never reads `window` or `document.defaultView`, adds no script and sends no events, so the rendered HTML is the same with or without analytics. Everything starts once the app runs in the browser, and the first navigation there sends the first page view.
@@ -85,14 +95,14 @@ This is why the package exists. On the server the provider does nothing: it neve
 
 Every pull request and every release runs the same checks, and a release is published only from a version tag after they pass:
 
-| Check                                        | What it proves                                                                                                                                           |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Vitest specs with 100 % coverage             | every line and branch of the package runs in a spec; the build fails below 100 %                                                                         |
-| Rendering through `@angular/platform-server` | the server HTML has no Google script and no data layer                                                                                                   |
-| End-to-end in Chromium                       | a demo app with Angular SSR on Express: complete server HTML, hydration, one script load, one page view per navigation, events, consent, a clean console |
-| Angular 21 and 22                            | the specs run on both supported versions                                                                                                                 |
-| NgModule and zoneless apps                   | both setups have their own specs                                                                                                                         |
-| Lint, format, `publint`                      | code and package follow the rules                                                                                                                        |
+| Check                                        | What it proves                                                                                                                                                                     |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vitest specs with 100 % coverage             | every line and branch of the package runs in a spec; the build fails below 100 %                                                                                                   |
+| Rendering through `@angular/platform-server` | the server HTML has no Google script and no data layer                                                                                                                             |
+| End-to-end in Chromium                       | a demo app with Angular SSR on Express: complete server HTML, hydration, one script load, one page view per navigation, events, consent, a strict nonce-based CSP, a clean console |
+| Angular 21 and 22                            | the specs run on both supported versions                                                                                                                                           |
+| NgModule and zoneless apps                   | both setups have their own specs                                                                                                                                                   |
+| Lint, format, `publint`                      | code and package follow the rules                                                                                                                                                  |
 
 No test talks to Google: every request to Google is answered locally. Each behaviour starts as a failing spec committed before the code, so the history shows the order. npm publishes with provenance, which ties the package to the exact commit and workflow run.
 

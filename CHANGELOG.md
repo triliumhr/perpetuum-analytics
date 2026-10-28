@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+-   The Google tag script carries Angular's `CSP_NONCE` (or `ngCspNonce` on the root element), so a strict nonce-based Content Security Policy needs no Google host in `script-src`. Without a nonce nothing changes. ([#42](https://github.com/triliumhr/perpetuum-analytics/issues/42))
+
 ## [3.0.0] - Unreleased
 
 Our best version so far: SSR-safe by design, Google Tag Manager without a snippet, Consent Mode, and every release proven by 100 % test coverage and an end-to-end test of a real SSR app. The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence.
