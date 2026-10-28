@@ -28,5 +28,18 @@ jobs:
             - run: npm run pack:check
             - name: The tag matches the package version
               run: test "v$(node -p "require('./projects/perpetuum-analytics/package.json').version")" = "$GITHUB_REF_NAME"
+            # A version published by hand (3.0.0 was) is already on npm; the tag then only marks it in git.
+            - name: Is this version on npm yet
+              id: npm
+              run: |
+                  name=$(node -p "require('./projects/perpetuum-analytics/package.json').name")
+                  version=$(node -p "require('./projects/perpetuum-analytics/package.json').version")
+                  if npm view "$name@$version" version > /dev/null 2>&1; then
+                      echo "published=true" >> "$GITHUB_OUTPUT"
+                      echo "::notice::$name@$version is already on npm, so this tag publishes nothing."
+                  else
+                      echo "published=false" >> "$GITHUB_OUTPUT"
+                  fi
             - run: npm publish --provenance --access public
+              if: steps.npm.outputs.published == 'false'
               working-directory: dist/perpetuum-analytics

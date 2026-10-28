@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0] - Unreleased
+## [3.0.0] - 2026-10-28
 
 Our best version so far: SSR-safe by design, Google Tag Manager without a snippet, Consent Mode, and every release proven by 100 % test coverage and an end-to-end test of a real SSR app. Everything 2.x did for GA4 and Tag Manager is still here, including a manual start and the 2.x data layer names. The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence.
 
