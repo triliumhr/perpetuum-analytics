@@ -18,6 +18,7 @@ export class Analytics {
     private readonly location = inject(Location)
     private readonly destroyRef = inject(DestroyRef)
     private googleTag: GoogleTag | null = null
+    private consentBeforeStart: ConsentState = {}
 
     /**
      * Loads the tag and starts page views. provideAnalytics() calls it when the app starts;
@@ -27,6 +28,7 @@ export class Analytics {
         if (!this.inBrowser || this.googleTag) return
 
         this.googleTag = installGoogleTag(this.document, this.config, this.nonce)
+        this.passOnConsentGivenBeforeStart()
         this.sendPageViewAfterEachNavigation()
         // A late start finds the visitor already on a page, and that page would otherwise never be counted.
         if (this.router.navigated) this.sendPageView()
@@ -39,7 +41,14 @@ export class Analytics {
 
     /** Passes the visitor's consent choice on to Google, for example from the app's own cookie banner. */
     updateConsent(choices: ConsentState): void {
-        this.googleTag?.updateConsent(choices)
+        if (this.googleTag) this.googleTag.updateConsent(choices)
+        // A banner may answer before a manual start(); the choice waits for the tag instead of being lost.
+        else this.consentBeforeStart = { ...this.consentBeforeStart, ...choices }
+    }
+
+    private passOnConsentGivenBeforeStart(): void {
+        if (Object.keys(this.consentBeforeStart).length > 0) this.googleTag?.updateConsent(this.consentBeforeStart)
+        this.consentBeforeStart = {}
     }
 
     private sendPageViewAfterEachNavigation(): void {
