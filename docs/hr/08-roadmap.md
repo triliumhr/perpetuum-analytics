@@ -11,13 +11,11 @@ Svaka stavka postaje GitHub issue u svojoj prekretnici, a svako izdanje u change
 
 ## Sad: 3.0, 4. kvartal 2026.
 
-GA4 i Google Tag Manager sigurni uz SSR, s `provideAnalytics()`, vlastitim eventima, Consent Modeom v2, 100 % pokrivenosti i end-to-end testom SSR-a na svakom pull requestu. Vidi [Kako testiramo](kako-testiramo).
+GA4 i Google Tag Manager sigurni uz SSR, s `provideAnalytics()`, vlastitim eventima, Consent Modeom v2, ručnim startom nakon privole, imenima iz 2.x za postojeće Tag Manager spremnike, CSP nonceom, 100 % pokrivenosti i end-to-end testom SSR-a na svakom pull requestu. Vidi [Kako testiramo](kako-testiramo).
 
-## Sljedeće: 3.1, privatnost i strogi webovi, 4. kvartal 2026.
+## Sljedeće: 3.1, čišće adrese, 4. kvartal 2026.
 
-- **CSP nonce:** skripta Google taga nosi Angularov `CSP_NONCE`, pa web sa strogim Content Security Policyjem ne treba iznimku za cijeli host.
 - **Čiste adrese:** opcija `pageLocation` koja uklanja parametre upita ili maskira dijelove puta prije nego odu Googleu, npr. e-mail u `?email=` ili broj narudžbe u `/narudzbe/:id`.
-- **Start nakon privole:** `start: 'manual'` i `analytics.start()`, pa se ništa ne učitava dok posjetitelj ne pristane, za webove koji to biraju umjesto [Consent Modea](consent-mode).
 
 ## Zatim: 3.2, bogatije mjerenje, 1. kvartal 2027.
 
@@ -30,10 +28,9 @@ GA4 i Google Tag Manager sigurni uz SSR, s `provideAnalytics()`, vlastitim event
 
 - Pomoćnik za testove koji bilježi evente u testovima aplikacija koje koriste paket.
 - Server-side tagging (vlastiti `transport_url`).
+- Eventi poslani sa servera kroz GA4 Measurement Protocol, npr. kupnja potvrđena na backendu, uz privolu posjetitelja iz preglednika i API tajnu koja ostaje na serveru.
 - Drugi alati za mjerenje iza istog API-ja, ako ih korisnici zatraže.
 
 ## Podrška verzijama
 
-- Svaka glavna verzija Angulara podržana je od prvog stabilnog izdanja, a dvije najnovije podržane su istodobno (sad 21 i 22).
-- Sigurnosne ispravke dolaze prve, kao patch izdanje trenutne glavne verzije.
-- Promjena koja traži prilagodbu dolazi samo u novoj glavnoj verziji, uz [vodič za prijelaz](migracija).
+Perpetuum Analytics održavamo dugoročno: dvije najnovije glavne verzije Angulara, nova u roku od 30 dana od izlaska, tjedni, mjesečni i kvartalni ritam održavanja te najava najmanje 6 mjeseci prije nego se išta ukloni. 2.x dobiva sigurnosne zakrpe do 30. travnja 2027. Cijela politika: [Podrška i održavanje](podrska).

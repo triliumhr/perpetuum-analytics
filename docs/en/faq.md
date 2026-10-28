@@ -47,8 +47,8 @@ Yes. Pass the choice to `updateConsent()`; any banner or consent tool that repor
 
 ### What about Content Security Policy?
 
-With a nonce-based policy, give Angular the page's nonce (`ngCspNonce` on the root element, or `CSP_NONCE`) and the Google tag script carries it, so `script-src` needs no Google host. Since 3.1; see [Strict Content Security Policy](getting-started#strict-content-security-policy). With a host-based policy, allow `https://www.googletagmanager.com` in `script-src`. Either way, allow the Google Analytics hosts in `connect-src` and `img-src`.
+With a nonce-based policy, give Angular the page's nonce (`ngCspNonce` on the root element, or `CSP_NONCE`) and the Google tag script carries it, so `script-src` needs no Google host. See [Strict Content Security Policy](getting-started#strict-content-security-policy). With a host-based policy, allow `https://www.googletagmanager.com` in `script-src`. Either way, allow the Google Analytics hosts in `connect-src` and `img-src`.
 
 ### I use 2.x. Do I have to move?
 
-No, 2.x keeps working. Version 3 brings Tag Manager without a snippet, Consent Mode and the MIT licence. See [Moving from 2.x](migrating-from-2).
+Not right away: 2.x keeps working and gets security fixes until 30 April 2027, with no new features and no new Angular versions. Version 3 keeps what 2.x did and brings Tag Manager without a snippet, Consent Mode, SSR safety and the MIT licence. See [Moving from 2.x](migrating-from-2).

@@ -1,8 +1,11 @@
 import { AnalyticsConfig, ConsentState, EventParams, GoogleAnalyticsConfig, TagManagerConfig } from './analytics-config'
 
 export interface PageView {
-    readonly page_location: string
-    readonly page_title: string
+    /** The full address, as GA4 expects it. */
+    readonly location: string
+    /** The address inside the app, as the router knows it; 2.x sent this. */
+    readonly path: string
+    readonly title: string
 }
 
 /** The page's connection to Google, once the tag is on the page. */
@@ -35,7 +38,7 @@ function installGtag(document: Document, config: GoogleAnalyticsConfig, nonce: s
     loadScript(document, `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(config.measurementId)}`, nonce)
 
     return {
-        pageView: (view) => gtag('event', 'page_view', view),
+        pageView: (view) => gtag('event', 'page_view', { page_location: view.location, page_title: view.title }),
         event: (name, params) => gtag('event', name, params),
         updateConsent: (choices) => gtag('consent', 'update', choices),
     }
@@ -47,12 +50,39 @@ function installTagManager(document: Document, config: TagManagerConfig, nonce: 
     dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
     loadScript(document, `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(config.containerId)}`, nonce)
 
+    const push = (entry: object) => dataLayer.push(entry)
+
     return {
-        pageView: (view) => dataLayer.push({ ...view, event: 'page_view' }),
-        // The name goes last, so a parameter called `event` cannot turn one event into another.
-        event: (name, params) => dataLayer.push({ ...params, event: name }),
+        ...(config.legacyEventNames ? legacyDataLayerEvents(push) : dataLayerEvents(push)),
         // Tag Manager reads consent from the same gtag commands as gtag.js.
         updateConsent: (choices) => gtag('consent', 'update', choices),
+    }
+}
+
+type DataLayerEvents = Pick<GoogleTag, 'pageView' | 'event'>
+
+function dataLayerEvents(push: (entry: object) => void): DataLayerEvents {
+    return {
+        pageView: (view) => push({ page_location: view.location, page_title: view.title, event: 'page_view' }),
+        // The name goes last, so a parameter called `event` cannot turn one event into another.
+        event: (name, params) => push({ ...params, event: name }),
+    }
+}
+
+/** The shapes 2.x pushed, which containers built for it still listen for. */
+function legacyDataLayerEvents(push: (entry: object) => void): DataLayerEvents {
+    return {
+        pageView: (view) => push({ event: 'pageview', page: { path: view.path, title: view.title } }),
+        // `event` goes last, as in dataLayerEvents, so no parameter can rename the event.
+        event: (name, { event_category, event_label, value, ...others }) =>
+            push({
+                ...others,
+                event: 'GAEvent',
+                eventCategory: event_category,
+                eventAction: name,
+                eventLabel: event_label,
+                eventValue: value,
+            }),
     }
 }
 

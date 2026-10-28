@@ -47,8 +47,8 @@ Da. Prenesi izbor u `updateConsent()`; radi svaki banner ili alat za privolu koj
 
 ### Što s Content Security Policyjem?
 
-Uz pravila s nonceom daj Angularu nonce stranice (`ngCspNonce` na korijenskom elementu ili `CSP_NONCE`), i skripta Google taga ga nosi, pa `script-src` ne treba nijedan Googleov host. Od verzije 3.1; vidi [Strogi Content Security Policy](pocetak#strogi-content-security-policy). Uz pravila po hostovima dopusti `https://www.googletagmanager.com` u `script-src`. U oba slučaja dopusti hostove Google Analyticsa u `connect-src` i `img-src`.
+Uz pravila s nonceom daj Angularu nonce stranice (`ngCspNonce` na korijenskom elementu ili `CSP_NONCE`), i skripta Google taga ga nosi, pa `script-src` ne treba nijedan Googleov host. Vidi [Strogi Content Security Policy](pocetak#strogi-content-security-policy). Uz pravila po hostovima dopusti `https://www.googletagmanager.com` u `script-src`. U oba slučaja dopusti hostove Google Analyticsa u `connect-src` i `img-src`.
 
 ### Koristim 2.x. Moram li prijeći?
 
-Ne, 2.x i dalje radi. Verzija 3 donosi Tag Manager bez isječka, Consent Mode i MIT licencu. Vidi [Prijelaz s 2.x](migracija).
+Ne odmah: 2.x i dalje radi i dobiva sigurnosne zakrpe do 30. travnja 2027., bez novih mogućnosti i bez novih verzija Angulara. Verzija 3 zadržava sve što je 2.x radio i donosi Tag Manager bez isječka, Consent Mode, sigurnost uz SSR i MIT licencu. Vidi [Prijelaz s 2.x](migracija).

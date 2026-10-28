@@ -52,8 +52,6 @@ Open the app, then Google Analytics › Reports › Realtime. Every navigation s
 
 ## Strict Content Security Policy
 
-_Since 3.1_
-
 With a nonce-based Content Security Policy, the Google tag script carries the page's nonce, so `script-src` needs no Google host. Give Angular the nonce the way it reads it anyway: the server writes it into the app's root element, next to the same nonce in the `Content-Security-Policy` header.
 
 ```html

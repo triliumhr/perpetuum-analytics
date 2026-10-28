@@ -45,3 +45,24 @@ Pozovi ga svaki put kad se izbor promijeni i pri svakom učitavanju stranice s i
 ## Tag Manager
 
 Uz `tag: 'gtm'` iste naredbe idu u data layer spremnika, pa ih tagovi u spremniku koji podržavaju Consent Mode slijede.
+
+## Ništa prije privole
+
+Uz Consent Mode tag se učita odmah i ništa ne sprema dok posjetitelj ne pristane; uz `analytics_storage: 'denied'` Google i dalje prima signale bez kolačića. Ako tvoj web prije izbora uopće ne smije kontaktirati Google, pokreni tag sam:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', start: 'manual' })
+
+// kad posjetitelj dopusti statistiku
+inject(Analytics).start()
+```
+
+| Prije `start()`                              | Nakon `start()`                                                        |
+| -------------------------------------------- | ---------------------------------------------------------------------- |
+| nijedna skripta od Googlea, nema data layera | tag se učita jednom                                                    |
+| `analytics.event()` ne šalje ništa           | broji se stranica na kojoj je posjetitelj, zatim svaka navigacija      |
+| `updateConsent()` pamti izbor                | zapamćeni izbor ide odmah iza zadanog stanja, dalje sve radi kao inače |
+
+Ponovni `start()` ne radi ništa, pa ga smiješ zvati pri svakom učitavanju stranice s izborom koji banner pamti. Ni na serveru ne radi ništa.
+
+Što izabrati: Consent Mode zadržava Googleovo modeliranje posjetitelja koji su odbili, pa izvještaji pokazuju više. `start: 'manual'` je stroži: prije izbora ništa ne stiže Googleu, a posjetitelj koji odbije nikad se ne broji. Ta se dva spajaju: uz `consentDefaults` i `start: 'manual'` zadano stanje ide prvo, čim se tag pokrene.

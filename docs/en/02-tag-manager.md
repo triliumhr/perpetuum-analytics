@@ -31,3 +31,18 @@ The package loads the container itself, so the Tag Manager snippet is not needed
 4. In the Google tag of the container, set `send_page_view` to `false`, so the first page is not counted twice.
 
 Custom events work the same way: a Custom Event trigger with the event name, and a GA4 Event tag that reads its parameters.
+
+## A container built for 2.x
+
+With `legacyEventNames: true` the data layer gets the names 2.x pushed, so such a container keeps counting without a change:
+
+```ts
+provideAnalytics({ tag: 'gtm', containerId: 'GTM-XXXXXXX', legacyEventNames: true })
+```
+
+| When                                                                      | Data layer entry                                                                            |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Every navigation                                                          | `{ event: 'pageview', page: { path, title } }`                                              |
+| `analytics.event('add_to_cart', { event_category: 'Cart', value: 12.5 })` | `{ event: 'GAEvent', eventCategory: 'Cart', eventAction: 'add_to_cart', eventValue: 12.5 }` |
+
+`page.path` is the address inside the app, as in 2.x. See [Moving from 2.x](migrating-from-2#with-google-tag-manager-update-the-container).

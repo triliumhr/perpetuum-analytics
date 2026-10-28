@@ -26,6 +26,12 @@ after(async () => {
 })
 
 async function openApp(path) {
+    const visit = await openPage(path)
+    await visit.page.waitForFunction(() => Array.isArray(window.dataLayer) && window.dataLayer.length > 3)
+    return visit
+}
+
+async function openPage(path) {
     const page = await browser.newPage()
     const googleRequests = []
     const problems = []
@@ -36,7 +42,6 @@ async function openApp(path) {
         return route.fulfill({ contentType: 'text/javascript', body: '' })
     })
     const response = await page.goto(origin + path)
-    await page.waitForFunction(() => Array.isArray(window.dataLayer) && window.dataLayer.length > 3)
     return { page, response, googleRequests, problems }
 }
 
@@ -108,6 +113,26 @@ describe('demo app with server-side rendering', () => {
         const dataLayer = await dataLayerOf(page)
         assert.deepEqual(events(dataLayer, 'add_to_cart'), [['event', 'add_to_cart', { currency: 'EUR', value: 12.5 }]])
         assert.deepEqual(dataLayer.at(-1), ['consent', 'update', { analytics_storage: 'granted' }])
+        assert.deepEqual(problems, [])
+        await page.close()
+    })
+
+    it("with start: 'manual', contacts Google only after the visitor allows statistics", async () => {
+        const { page, googleRequests, problems } = await openPage('/shop?start=manual')
+        await page.getByRole('button', { name: 'Add to cart' }).click()
+
+        assert.deepEqual(googleRequests, [], 'nothing reaches Google before the choice')
+        assert.equal(await page.evaluate(() => window.dataLayer), undefined)
+
+        await page.getByRole('button', { name: 'Allow statistics' }).click()
+        await page.waitForFunction(() => window.dataLayer?.some((entry) => entry[1] === 'page_view'))
+
+        const dataLayer = await dataLayerOf(page)
+        assert.deepEqual(googleRequests, ['https://www.googletagmanager.com/gtag/js?id=G-DEMO000000'])
+        assert.deepEqual(events(dataLayer, 'page_view'), [
+            ['event', 'page_view', { page_location: `${origin}/shop?start=manual`, page_title: 'Shop' }],
+        ])
+        assert.deepEqual(events(dataLayer, 'add_to_cart'), [], 'an event from before the choice is not sent later')
         assert.deepEqual(problems, [])
         await page.close()
     })

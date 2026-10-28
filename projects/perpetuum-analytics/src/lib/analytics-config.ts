@@ -8,6 +8,11 @@ export type ConsentState = Readonly<Partial<Record<ConsentSignal, 'granted' | 'd
 interface SharedConfig {
     /** Consent Google assumes until the app calls `updateConsent()`. Without it, the tag sends no consent command. */
     readonly consentDefaults?: ConsentState
+    /**
+     * `'auto'` (default) loads the tag when the app starts. `'manual'` waits for `Analytics.start()`,
+     * for apps that may load nothing from Google before the visitor agrees, as `setGoogleAnalyticsScripts()` did in 2.x.
+     */
+    readonly start?: 'auto' | 'manual'
 }
 
 /** Which Google tag the app uses and the id it reports to. */
@@ -21,6 +26,11 @@ export interface TagManagerConfig extends SharedConfig {
     readonly tag: 'gtm'
     /** The Google Tag Manager container id, `GTM-…`. */
     readonly containerId: string
+    /**
+     * Pushes page views as `pageview` and events as `GAEvent`, under the names 2.x used,
+     * so a container built for 2.x keeps counting without changes.
+     */
+    readonly legacyEventNames?: boolean
 }
 
 export type AnalyticsConfig = GoogleAnalyticsConfig | TagManagerConfig
