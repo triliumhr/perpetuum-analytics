@@ -26,6 +26,11 @@ export interface TagManagerConfig extends SharedConfig {
     readonly tag: 'gtm'
     /** The Google Tag Manager container id, `GTM-…`. */
     readonly containerId: string
+    /**
+     * Pushes page views as `pageview` and events as `GAEvent`, under the names 2.x used,
+     * so a container built for 2.x keeps counting without changes.
+     */
+    readonly legacyEventNames?: boolean
 }
 
 export type AnalyticsConfig = GoogleAnalyticsConfig | TagManagerConfig

@@ -53,7 +53,8 @@ export class Analytics {
     }
 
     private sendPageView(): void {
-        const address = new URL(this.location.prepareExternalUrl(this.router.url), this.document.location.origin)
-        this.googleTag?.pageView({ page_location: address.href, page_title: this.document.title })
+        const path = this.router.url
+        const address = new URL(this.location.prepareExternalUrl(path), this.document.location.origin)
+        this.googleTag?.pageView({ location: address.href, path, title: this.document.title })
     }
 }

@@ -51,7 +51,14 @@ describe('Tag Manager with legacyEventNames, as 2.x sent them', () => {
         TestBed.inject(Analytics).event('sign_up', { method: 'email', event: 'purchase' })
 
         expect(pushedByTheApp()).toEqual([
-            { event: 'GAEvent', method: 'email', eventCategory: undefined, eventAction: 'sign_up', eventLabel: undefined, eventValue: undefined },
+            {
+                event: 'GAEvent',
+                method: 'email',
+                eventCategory: undefined,
+                eventAction: 'sign_up',
+                eventLabel: undefined,
+                eventValue: undefined,
+            },
         ])
     })
 })
