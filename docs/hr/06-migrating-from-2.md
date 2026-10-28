@@ -7,7 +7,7 @@ summary: Što je novo u 3.0, što je uklonjeno i kako prebaciti aplikaciju u nek
 
 # Prijelaz s 2.x
 
-Verzija 3 ima novo ime paketa, manji API i MIT licencu. Verzija 2.x ostaje na npm-u kao `perpetuum-analytics` i dalje radi, pa prelaziš kad ti odgovara.
+Verzija 3 ima novo ime paketa, manji API i MIT licencu, a zadržava sve što je 2.x radio za GA4 i Tag Manager. Verzija 2.x ostaje na npm-u kao `perpetuum-analytics` i dalje radi, pa prelaziš kad ti odgovara, prije kraja njezine podrške (vidi odjeljak „Podrška za 2.x” na kraju).
 
 ## Promjene koje traže prilagodbu
 
@@ -17,6 +17,8 @@ Verzija 3 ima novo ime paketa, manji API i MIT licencu. Verzija 2.x ostaje na np
 | `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`     | `provideAnalytics({ tag: 'gtag', measurementId })`           |
 | `trackingType: 'gtm'` uz vlastiti isječak                           | `provideAnalytics({ tag: 'gtm', containerId })`, bez isječka |
 | `analytics.setGoogleAnalyticsScripts()` u `AppComponent`            | ništa, provider kreće sam                                    |
+| `setGoogleAnalyticsScripts()` pozvan nakon privole                  | `start: 'manual'` i `analytics.start()`                      |
+| GTM data layer `pageview` i `GAEvent`                               | imena GA4, ili ona iz 2.x uz `legacyEventNames: true`        |
 | `sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                              |
 | `[perpetuumAnalytics]="{ … }"`                                      | `perpetuumTrack="name"` uz `[perpetuumTrackParams]`          |
 | `trackingType: 'analytics'` (analytics.js)                          | uklonjeno, Google je ugasio Universal Analytics              |
@@ -33,7 +35,7 @@ Verzija 3 ima novo ime paketa, manji API i MIT licencu. Verzija 2.x ostaje na np
     ```
 
 2. Zamijeni `AnalyticsModule.forRoot(…)` s `provideAnalytics(…)` u providerima aplikacije. U aplikaciji s NgModulima ide u `providers` glavnog modula.
-3. Makni poziv `setGoogleAnalyticsScripts()`.
+3. Makni poziv `setGoogleAnalyticsScripts()`. Ako ga je aplikacija zvala tek kad je posjetitelj pristao, vidi odjeljak „Ako si tag učitavao tek nakon privole” ispod.
 4. Prepiši evente. Event iz 2.x s kategorijom, radnjom i oznakom postaje GA4 event nazvan po radnji:
 
     ```ts
@@ -48,7 +50,21 @@ Verzija 3 ima novo ime paketa, manji API i MIT licencu. Verzija 2.x ostaje na np
 
 ## Uz Google Tag Manager: osvježi kontejner
 
-U 3.x data layer govori jezikom GA4, pa okidači i varijable u kontejneru koji slušaju imena iz 2.x trebaju jednu prilagodbu:
+U 3.x data layer govori jezikom GA4. Kontejner složen za 2.x sluša druga imena, pa izaberi jedan od dva puta.
+
+### Zadrži kontejner kakav jest
+
+Dodaj jednu opciju i data layer dobiva imena iz 2.x, pa kontejner broji i dalje, bez izmjene:
+
+```ts
+provideAnalytics({ tag: 'gtm', containerId: 'GTM-XXXXXXX', legacyEventNames: true })
+```
+
+Prikazi stranica stižu kao `{ event: 'pageview', page: { path, title } }`, a eventi kao `{ event: 'GAEvent', eventCategory, eventAction, eventLabel, eventValue }`. `analytics.event('add_to_cart', { event_category: 'Cart', event_label: item.name, value: item.price })` ih puni: ime postaje `eventAction`, a `event_category`, `event_label` i `value` ostala tri; svaki drugi parametar ostaje uz njih. To je najbrži prijelaz, a kontejner može prijeći na imena GA4 kasnije, kad tebi odgovara.
+
+### Prebaci kontejner na imena GA4
+
+Okidači i varijable koji slušaju imena iz 2.x trebaju jednu prilagodbu:
 
 | Data layer u 2.x                                                           | Data layer u 3.x                                     |
 | -------------------------------------------------------------------------- | ---------------------------------------------------- |
@@ -61,4 +77,17 @@ U 3.x data layer govori jezikom GA4, pa okidači i varijable u kontejneru koji s
 
 ## Ako si tag učitavao tek nakon privole
 
-U 2.x neke su aplikacije zvale `setGoogleAnalyticsScripts()` tek kad je posjetitelj pristao. U 3.x koristi [Consent Mode](consent-mode): tag se učita sa svime na `denied` i slijedi izbor.
+U 2.x neke su aplikacije zvale `setGoogleAnalyticsScripts()` tek kad je posjetitelj pristao. U 3.x je to `start: 'manual'`, a `analytics.start()` ide ondje gdje je bio stari poziv:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', start: 'manual' })
+
+// kad posjetitelj dopusti statistiku
+inject(Analytics).start()
+```
+
+Do tada se od Googlea ništa ne učitava i eventi se ne šalju. Nakon `start()` tag se učita jednom i broji stranicu na kojoj je posjetitelj. [Consent Mode](consent-mode), odjeljak „Ništa prije privole”, objašnjava kad izabrati ovo, a kad je dovoljan sam Consent Mode.
+
+## Podrška za 2.x
+
+2.x dobiva samo sigurnosne zakrpe, do 30. travnja 2027.: bez novih mogućnosti i bez novih verzija Angulara. Sigurnosna zakrpa izlazi kao izdanje 2.x na npm-u pod `perpetuum-analytics`. Od 1. svibnja 2027. 2.x više ne dobiva izdanja; paket ostaje na npm-u, označen kao zastario, s uputom na ovaj vodič.

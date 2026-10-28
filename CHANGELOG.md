@@ -5,15 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Added
-
--   The Google tag script carries Angular's `CSP_NONCE` (or `ngCspNonce` on the root element), so a strict nonce-based Content Security Policy needs no Google host in `script-src`. Without a nonce nothing changes. ([#42](https://github.com/triliumhr/perpetuum-analytics/issues/42))
-
 ## [3.0.0] - Unreleased
 
-Our best version so far: SSR-safe by design, Google Tag Manager without a snippet, Consent Mode, and every release proven by 100 % test coverage and an end-to-end test of a real SSR app. The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence.
+Our best version so far: SSR-safe by design, Google Tag Manager without a snippet, Consent Mode, and every release proven by 100 % test coverage and an end-to-end test of a real SSR app. Everything 2.x did for GA4 and Tag Manager is still here, including a manual start and the 2.x data layer names. The package is now `@triliumhr/perpetuum-analytics`, under the MIT licence.
+
+2.x (`perpetuum-analytics`) gets security fixes only, until 30 April 2027: no new features and no new Angular versions.
 
 ### Breaking changes
 
@@ -21,13 +17,13 @@ Step-by-step guide: [Moving from 2.x](docs/en/06-migrating-from-2.md).
 
 -   New package name: `npm i @triliumhr/perpetuum-analytics` instead of `perpetuum-analytics`.
 -   `AnalyticsModule.forRoot()` is replaced by `provideAnalytics({ tag: 'gtag', measurementId })` or `provideAnalytics({ tag: 'gtm', containerId })`.
--   `setGoogleAnalyticsScripts()` is gone: the provider starts on its own in the browser.
+-   `setGoogleAnalyticsScripts()` is gone: the provider starts on its own in the browser. Apps that called it only after consent use `start: 'manual'` and `analytics.start()`.
 -   `AnalyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` is replaced by `Analytics.event(name, params)` with GA4 names and parameters.
 -   The `[perpetuumAnalytics]` directive is replaced by `perpetuumTrack` with `[perpetuumTrackParams]`.
 -   analytics.js (`trackingType: 'analytics'`) is no longer supported, since Google retired Universal Analytics.
 -   Angular 21 or 22 is required; `@angular/router` and `rxjs` are peer dependencies.
 -   With Google Tag Manager, remove the snippet from `index.html`; the package loads the container.
--   With Google Tag Manager, the data layer uses GA4 names: page views are `page_view` with `page_location` and `page_title` (was `pageview` with `page.path` and `page.title`), and events carry their own name instead of `GAEvent`. Triggers and variables in the container need updating; see [Moving from 2.x](docs/en/06-migrating-from-2.md#with-google-tag-manager-update-the-container).
+-   With Google Tag Manager, the data layer uses GA4 names: page views are `page_view` with `page_location` and `page_title` (was `pageview` with `page.path` and `page.title`), and events carry their own name instead of `GAEvent`. `legacyEventNames: true` keeps the 2.x names, so an existing container counts without changes; or update its triggers and variables, see [Moving from 2.x](docs/en/06-migrating-from-2.md#with-google-tag-manager-update-the-container).
 
 ### Added
 
@@ -35,6 +31,10 @@ Step-by-step guide: [Moving from 2.x](docs/en/06-migrating-from-2.md).
 -   Google Tag Manager loads the container itself and receives page views and events in its data layer.
 -   `Analytics.event(name, params)` and the `perpetuumTrack` directive for custom events, also in apps without the router.
 -   Consent Mode v2: `consentDefaults`, sent before any other command, and `Analytics.updateConsent()`.
+-   `start: 'manual'` and `Analytics.start()`: nothing loads from Google until the app starts the tag, for example once the visitor agrees, as `setGoogleAnalyticsScripts()` allowed in 2.x. A late start counts the current page, and a consent choice made before it follows the defaults. ([#44](https://github.com/triliumhr/perpetuum-analytics/issues/44))
+-   `legacyEventNames: true` for Google Tag Manager: page views as `pageview` with `page.path` and `page.title`, and events as `GAEvent` with `eventCategory`, `eventAction`, `eventLabel` and `eventValue`, as 2.x pushed them.
+-   The Google tag script carries Angular's `CSP_NONCE` (or `ngCspNonce` on the root element), so a strict nonce-based Content Security Policy needs no Google host in `script-src`. Without a nonce nothing changes. ([#42](https://github.com/triliumhr/perpetuum-analytics/issues/42))
+-   A security policy with the supported versions: [SECURITY.md](SECURITY.md).
 -   Support for NgModule apps and zoneless apps, each covered by specs.
 -   Proof of SSR safety: a spec renders through `@angular/platform-server`, and an end-to-end test runs a demo app with Angular SSR in Chromium.
 -   100 % line, branch, function and statement coverage as a gate on every pull request and release.

@@ -11,13 +11,11 @@ Each item becomes a GitHub issue under its milestone, and each release lists wha
 
 ## Now: 3.0, Q4 2026
 
-SSR-safe GA4 and Google Tag Manager with `provideAnalytics()`, custom events, Consent Mode v2, 100 % coverage and an end-to-end SSR test on every pull request. See [How we test](testing).
+SSR-safe GA4 and Google Tag Manager with `provideAnalytics()`, custom events, Consent Mode v2, a manual start after consent, the 2.x Tag Manager names for existing containers, a CSP nonce, 100 % coverage and an end-to-end SSR test on every pull request. See [How we test](testing).
 
-## Next: 3.1, privacy and strict sites, Q4 2026
+## Next: 3.1, cleaner addresses, Q4 2026
 
-- **CSP nonce:** the Google tag script carries Angular's `CSP_NONCE`, so sites with a strict Content Security Policy need no host-wide exception.
 - **Clean addresses:** a `pageLocation` option that removes query parameters or masks parts of the path before they reach Google, e.g. an e-mail in `?email=` or an order id in `/orders/:id`.
-- **Start after consent:** `start: 'manual'` and `analytics.start()`, so nothing loads until the visitor agrees, for sites that choose this over [Consent Mode](consent-mode).
 
 ## Then: 3.2, richer measurement, Q1 2027
 
@@ -36,4 +34,5 @@ SSR-safe GA4 and Google Tag Manager with `provideAnalytics()`, custom events, Co
 
 - Each Angular major is supported from its first stable release, and the two newest majors are supported at the same time (now 21 and 22).
 - Security fixes come first, in a patch release of the current major.
+- 2.x (`perpetuum-analytics`) gets security fixes only, until 30 April 2027.
 - A breaking change comes only in a new major, with a [migration guide](migrating-from-2).

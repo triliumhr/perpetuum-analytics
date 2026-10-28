@@ -39,6 +39,8 @@ provideAnalytics({ tag: 'gtm', containerId: 'GTM-XXXXXXX' })
 
 The container loads with the `gtm.js` event. Page views arrive in the data layer as `page_view` events, and custom events under their own names, ready for the tags you set up in the container.
 
+A container built for 2.x keeps counting with `legacyEventNames: true`: the data layer then gets `pageview` and `GAEvent`, as 2.x pushed them. See [A container built for 2.x](docs/en/02-tag-manager.md#a-container-built-for-2x).
+
 ## Custom events
 
 From a template, with the `perpetuumTrack` directive:
@@ -77,9 +79,19 @@ inject(Analytics).updateConsent({ analytics_storage: 'granted' })
 
 The defaults reach Google before any other command. Without `consentDefaults`, nothing about consent is sent.
 
+If your site may not contact Google at all before the visitor agrees, start the tag yourself:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', start: 'manual' })
+
+inject(Analytics).start() // when the visitor allows statistics
+```
+
+Until then nothing loads and nothing is sent; a choice passed to `updateConsent()` waits for the tag. See [Load nothing before consent](docs/en/04-consent-mode.md#load-nothing-before-consent).
+
 ## Content Security Policy
 
-With a nonce-based policy, the Google tag script carries Angular's `CSP_NONCE` (since 3.1). The usual way is `ngCspNonce` on the root element, written by the server with the same nonce as in the `Content-Security-Policy` header:
+With a nonce-based policy, the Google tag script carries Angular's `CSP_NONCE`. The usual way is `ngCspNonce` on the root element, written by the server with the same nonce as in the `Content-Security-Policy` header:
 
 ```html
 <app-root ngCspNonce="…"></app-root>
@@ -108,7 +120,7 @@ No test talks to Google: every request to Google is answered locally. Each behav
 
 ## Moving from 2.x
 
-Version 3 is a new package name and a smaller API.
+Version 3 is a new package name and a smaller API, and it keeps everything 2.x did for GA4 and Tag Manager.
 
 | 2.x                                                                                  | 3.x                                                                |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
@@ -119,10 +131,12 @@ Version 3 is a new package name and a smaller API.
 | `analyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                    |
 | `[perpetuumAnalytics]="{ … }"`                                                       | `perpetuumTrack="name"` with `[perpetuumTrackParams]`              |
 | `trackingType: 'analytics'` (analytics.js)                                           | not supported, Google retired Universal Analytics                  |
+| `setGoogleAnalyticsScripts()` called after consent                                   | `start: 'manual'` and `analytics.start()`                          |
+| GTM data layer `pageview` and `GAEvent`                                              | GA4 names, or the 2.x ones with `legacyEventNames: true`           |
 
-If you called `setGoogleAnalyticsScripts()` only after consent, either add the provider at that point (lazy route or `bootstrapApplication` after the choice) or use Consent Mode.
+Step by step, Tag Manager containers included: [Moving from 2.x](docs/en/06-migrating-from-2.md).
 
-Version 2.x stays on npm under `perpetuum-analytics` and keeps working.
+Version 2.x stays on npm under `perpetuum-analytics` and keeps working. It gets security fixes only, until 30 April 2027: no new features and no new Angular versions. See [SECURITY.md](SECURITY.md).
 
 ## Development
 

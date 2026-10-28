@@ -11,14 +11,14 @@ A release is published only from a version tag, after the same checks that run o
 
 ## On every pull request
 
-| Check                                         | What it proves                                                                                                                                                                      |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Specs (Vitest) with 100 % coverage            | every line and branch of the library runs in a spec; the build fails below 100 %                                                                                                    |
-| Server render with `@angular/platform-server` | the server HTML has no Google script and no data layer                                                                                                                              |
-| End-to-end in Chromium                        | a demo app with Angular SSR on Express: complete server HTML, hydration, one script load, one page view per navigation, events, consent, a strict nonce-based CSP, an empty console |
-| Angular 21 and 22                             | the specs run on both supported majors                                                                                                                                              |
-| NgModule and zoneless apps                    | both setups are covered by specs                                                                                                                                                    |
-| Lint, format, `publint`                       | the code and the package follow the rules                                                                                                                                           |
+| Check                                         | What it proves                                                                                                                                                                                                                                 |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Specs (Vitest) with 100 % coverage            | every line and branch of the library runs in a spec; the build fails below 100 %                                                                                                                                                               |
+| Server render with `@angular/platform-server` | the server HTML has no Google script and no data layer                                                                                                                                                                                         |
+| End-to-end in Chromium                        | a demo app with Angular SSR on Express: complete server HTML, hydration, one script load, one page view per navigation, events, consent, nothing sent to Google before consent with a manual start, a strict nonce-based CSP, an empty console |
+| Angular 21 and 22                             | the specs run on both supported majors                                                                                                                                                                                                         |
+| NgModule and zoneless apps                    | both setups are covered by specs                                                                                                                                                                                                               |
+| Lint, format, `publint`                       | the code and the package follow the rules                                                                                                                                                                                                      |
 
 Requests to Google are answered locally in every test, so no test depends on Google or sends anything to it.
 

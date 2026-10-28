@@ -45,3 +45,24 @@ Call it again whenever the choice changes, and on every page load with the choic
 ## Tag Manager
 
 With `tag: 'gtm'` the same commands go to the container's data layer, so tags in the container that support Consent Mode follow them.
+
+## Load nothing before consent
+
+With Consent Mode the tag loads at once and stores nothing until the visitor agrees; with `analytics_storage: 'denied'` Google still receives cookieless pings. If your site may not contact Google at all before the choice, start the tag yourself:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', start: 'manual' })
+
+// when the visitor allows statistics
+inject(Analytics).start()
+```
+
+| Before `start()`                     | After `start()`                                               |
+| ------------------------------------ | ------------------------------------------------------------- |
+| no script from Google, no data layer | the tag loads once                                            |
+| `analytics.event()` sends nothing    | the page the visitor is on is counted, then every navigation  |
+| `updateConsent()` keeps the choice   | the kept choice follows the defaults, then all works as usual |
+
+Calling `start()` again does nothing, so it is safe to call on every page load with the choice your banner remembers. On the server it does nothing either.
+
+Which to choose: Consent Mode keeps Google's modelling of visitors who declined, so reports show more. `start: 'manual'` is stricter: nothing reaches Google before the choice, and a visitor who declines is never counted. The two combine: with `consentDefaults` and `start: 'manual'`, the defaults go first once the tag starts.

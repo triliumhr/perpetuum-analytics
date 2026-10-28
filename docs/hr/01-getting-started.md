@@ -52,8 +52,6 @@ Otvori aplikaciju, pa Google Analytics › Reports › Realtime. Svaka navigacij
 
 ## Strogi Content Security Policy
 
-_Od verzije 3.1_
-
 Uz Content Security Policy s nonceom, skripta Google taga nosi nonce stranice, pa `script-src` ne treba nijedan Googleov host. Daj Angularu nonce onako kako ga ionako čita: server ga upiše u korijenski element aplikacije, uz isti nonce u zaglavlju `Content-Security-Policy`.
 
 ```html

@@ -31,3 +31,18 @@ Paket sam učita spremnik, pa Tag Manager isječak u `index.html` više ne treba
 4. U Google tagu spremnika postavi `send_page_view` na `false`, da se prva stranica ne broji dvaput.
 
 Vlastiti eventi rade isto: Custom Event okidač s imenom eventa i GA4 Event tag koji čita njegove parametre.
+
+## Spremnik složen za 2.x
+
+Uz `legacyEventNames: true` data layer dobiva imena koja je slao 2.x, pa takav spremnik broji i dalje, bez izmjene:
+
+```ts
+provideAnalytics({ tag: 'gtm', containerId: 'GTM-XXXXXXX', legacyEventNames: true })
+```
+
+| Kada                                                                      | Unos u data layeru                                                                          |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Svaka navigacija                                                          | `{ event: 'pageview', page: { path, title } }`                                              |
+| `analytics.event('add_to_cart', { event_category: 'Cart', value: 12.5 })` | `{ event: 'GAEvent', eventCategory: 'Cart', eventAction: 'add_to_cart', eventValue: 12.5 }` |
+
+`page.path` je adresa unutar aplikacije, kao u 2.x. Vidi [Prijelaz s 2.x](migracija), odjeljak „Uz Google Tag Manager: osvježi kontejner”.
