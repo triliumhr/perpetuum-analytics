@@ -4,6 +4,8 @@ SSR-safe Google Analytics 4 and Google Tag Manager for Angular.
 
 On the server it stays quiet: no `window`, no script, no data layer, so server-side rendering and hydration run as if analytics were not there. In the browser one provider loads the tag and sends a page view after every navigation.
 
+Consent comes first. With `start: 'manual'`, nothing reaches Google until your app calls `analytics.start()`, for example once the visitor agrees. With Consent Mode, the tag loads and follows the visitor's choice. See [Consent Mode](#consent-mode).
+
 Works with Angular 21 and 22: standalone or NgModule apps, with or without zone.js, with or without server-side rendering.
 
 Full guide with how-to examples and a FAQ, in English and Croatian: [`docs/`](docs).
@@ -122,17 +124,17 @@ No test talks to Google: every request to Google is answered locally. Each behav
 
 Version 3 is a new package name and a smaller API, and it keeps everything 2.x did for GA4 and Tag Manager.
 
-| 2.x                                                                                  | 3.x                                                                |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `npm i perpetuum-analytics`                                                          | `npm i @triliumhr/perpetuum-analytics`                             |
-| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`                      | `provideAnalytics({ tag: 'gtag', measurementId })`                 |
-| `trackingType: 'gtm'` with your own snippet                                          | `provideAnalytics({ tag: 'gtm', containerId })`, no snippet needed |
-| `analytics.setGoogleAnalyticsScripts()` in `AppComponent`                            | nothing, the provider starts on its own                            |
-| `analyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                    |
-| `[perpetuumAnalytics]="{ … }"`                                                       | `perpetuumTrack="name"` with `[perpetuumTrackParams]`              |
-| `trackingType: 'analytics'` (analytics.js)                                           | not supported, Google retired Universal Analytics                  |
-| `setGoogleAnalyticsScripts()` called after consent                                   | `start: 'manual'` and `analytics.start()`                          |
-| GTM data layer `pageview` and `GAEvent`                                              | GA4 names, or the 2.x ones with `legacyEventNames: true`           |
+| 2.x                                                                                  | 3.x                                                                              |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `npm i perpetuum-analytics`                                                          | `npm i @triliumhr/perpetuum-analytics`                                           |
+| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`                      | `provideAnalytics({ tag: 'gtag', measurementId })`                               |
+| `trackingType: 'gtm'` with your own snippet                                          | `provideAnalytics({ tag: 'gtm', containerId })`, no snippet needed               |
+| `analytics.setGoogleAnalyticsScripts()` in `AppComponent`                            | the provider starts on its own, or on `analytics.start()` with `start: 'manual'` |
+| `analyticsService.sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                                  |
+| `[perpetuumAnalytics]="{ … }"`                                                       | `perpetuumTrack="name"` with `[perpetuumTrackParams]`                            |
+| `trackingType: 'analytics'` (analytics.js)                                           | not supported, Google retired Universal Analytics                                |
+| `setGoogleAnalyticsScripts()` called after consent                                   | `start: 'manual'` and `analytics.start()`                                        |
+| GTM data layer `pageview` and `GAEvent`                                              | GA4 names, or the 2.x ones with `legacyEventNames: true`                         |
 
 Step by step, Tag Manager containers included: [Moving from 2.x](docs/en/06-migrating-from-2.md).
 
