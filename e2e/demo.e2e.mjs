@@ -118,7 +118,7 @@ describe('demo app with server-side rendering', () => {
     })
 
     it("with start: 'manual', contacts Google only after the visitor allows statistics", async () => {
-        const { page, googleRequests, problems } = await openPage('/shop?ask-first')
+        const { page, googleRequests, problems } = await openPage('/shop?start=manual')
         await page.getByRole('button', { name: 'Add to cart' }).click()
 
         assert.deepEqual(googleRequests, [], 'nothing reaches Google before the choice')
@@ -130,7 +130,7 @@ describe('demo app with server-side rendering', () => {
         const dataLayer = await dataLayerOf(page)
         assert.deepEqual(googleRequests, ['https://www.googletagmanager.com/gtag/js?id=G-DEMO000000'])
         assert.deepEqual(events(dataLayer, 'page_view'), [
-            ['event', 'page_view', { page_location: `${origin}/shop?ask-first`, page_title: 'Shop' }],
+            ['event', 'page_view', { page_location: `${origin}/shop?start=manual`, page_title: 'Shop' }],
         ])
         assert.deepEqual(events(dataLayer, 'add_to_cart'), [], 'an event from before the choice is not sent later')
         assert.deepEqual(problems, [])

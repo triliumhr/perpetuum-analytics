@@ -21,5 +21,7 @@ export class App {
 
     protected allowStatistics(): void {
         this.analytics.updateConsent({ analytics_storage: 'granted' })
+        // With start: 'manual' this loads the tag now; when it has already started, it does nothing.
+        this.analytics.start()
     }
 }
