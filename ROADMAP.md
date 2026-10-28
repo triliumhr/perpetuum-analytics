@@ -26,7 +26,4 @@ SSR-safe GA4 and Google Tag Manager with `provideAnalytics()`, custom events, Co
 
 ## Support policy
 
-- Each Angular major is supported from its first stable release, and the two newest majors are supported at the same time (now 21 and 22).
-- Security fixes come first, in a patch release of the current major.
-- 2.x (`perpetuum-analytics`) gets security fixes only, until 30 April 2027.
-- A breaking change comes only in a new major, with a migration guide.
+Perpetuum Analytics is maintained for the long run: the two newest Angular majors, a new one within 30 days of its release, a weekly, monthly and quarterly maintenance rhythm, and at least 6 months' notice before anything is removed. 2.x gets security fixes until 30 April 2027. The whole policy: [Support and maintenance](docs/en/10-support.md).

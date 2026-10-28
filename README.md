@@ -159,7 +159,14 @@ GitHub Actions runs the same checks on every pull request, the specs also on Ang
 2. `npm version <major|minor|patch> --no-git-tag-version` in `projects/perpetuum-analytics`, commit, then `git tag v<version>` and push the tag.
 3. The Release workflow checks everything again and publishes to npm through Trusted Publishing, with provenance.
 
-## Maintenance
+## Support and maintenance
+
+| Version                               | Support                                        |
+| ------------------------------------- | ---------------------------------------------- |
+| 3.x, `@triliumhr/perpetuum-analytics` | active: new features, fixes and security fixes |
+| 2.x, `perpetuum-analytics`            | security fixes only, until 30 April 2027       |
+
+The two newest Angular majors are supported, a new one within 30 days of its stable release, and nothing is removed without at least 6 months' notice and a new major. The whole policy: [Support and maintenance](docs/en/10-support.md).
 
 - **Every week:** Dependabot groups dependency updates, CI runs all checks on `main` against the latest releases, and open security alerts and `npm audit` are reviewed.
 - **Every month:** new Angular, TypeScript and Node.js releases and GitHub Actions versions are checked against the support policy, and open issues and pull requests are answered.

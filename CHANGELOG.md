@@ -34,7 +34,7 @@ Step-by-step guide: [Moving from 2.x](docs/en/06-migrating-from-2.md).
 -   `start: 'manual'` and `Analytics.start()`: nothing loads from Google until the app starts the tag, for example once the visitor agrees, as `setGoogleAnalyticsScripts()` allowed in 2.x. A late start counts the current page, and a consent choice made before it follows the defaults. ([#44](https://github.com/triliumhr/perpetuum-analytics/issues/44))
 -   `legacyEventNames: true` for Google Tag Manager: page views as `pageview` with `page.path` and `page.title`, and events as `GAEvent` with `eventCategory`, `eventAction`, `eventLabel` and `eventValue`, as 2.x pushed them.
 -   The Google tag script carries Angular's `CSP_NONCE` (or `ngCspNonce` on the root element), so a strict nonce-based Content Security Policy needs no Google host in `script-src`. Without a nonce nothing changes. ([#42](https://github.com/triliumhr/perpetuum-analytics/issues/42))
--   A security policy with the supported versions: [SECURITY.md](SECURITY.md).
+-   A security policy ([SECURITY.md](SECURITY.md)) and a public support policy: supported versions, Angular majors, the maintenance rhythm and deprecation notice ([Support and maintenance](docs/en/10-support.md)).
 -   Support for NgModule apps and zoneless apps, each covered by specs.
 -   Proof of SSR safety: a spec renders through `@angular/platform-server`, and an end-to-end test runs a demo app with Angular SSR in Chromium.
 -   100 % line, branch, function and statement coverage as a gate on every pull request and release.

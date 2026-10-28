@@ -33,7 +33,4 @@ GA4 i Google Tag Manager sigurni uz SSR, s `provideAnalytics()`, vlastitim event
 
 ## Podrška verzijama
 
-- Svaka glavna verzija Angulara podržana je od prvog stabilnog izdanja, a dvije najnovije podržane su istodobno (sad 21 i 22).
-- Sigurnosne ispravke dolaze prve, kao patch izdanje trenutne glavne verzije.
-- 2.x (`perpetuum-analytics`) dobiva samo sigurnosne zakrpe, do 30. travnja 2027.
-- Promjena koja traži prilagodbu dolazi samo u novoj glavnoj verziji, uz [vodič za prijelaz](migracija).
+Perpetuum Analytics održavamo dugoročno: dvije najnovije glavne verzije Angulara, nova u roku od 30 dana od izlaska, tjedni, mjesečni i kvartalni ritam održavanja te najava najmanje 6 mjeseci prije nego se išta ukloni. 2.x dobiva sigurnosne zakrpe do 30. travnja 2027. Cijela politika: [Podrška i održavanje](podrska).
