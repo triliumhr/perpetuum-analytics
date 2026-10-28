@@ -28,6 +28,7 @@ GA4 i Google Tag Manager sigurni uz SSR, s `provideAnalytics()`, vlastitim event
 
 - Pomoćnik za testove koji bilježi evente u testovima aplikacija koje koriste paket.
 - Server-side tagging (vlastiti `transport_url`).
+- Eventi poslani sa servera kroz GA4 Measurement Protocol, npr. kupnja potvrđena na backendu, uz privolu posjetitelja iz preglednika i API tajnu koja ostaje na serveru.
 - Drugi alati za mjerenje iza istog API-ja, ako ih korisnici zatraže.
 
 ## Podrška verzijama

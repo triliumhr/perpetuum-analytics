@@ -28,6 +28,7 @@ SSR-safe GA4 and Google Tag Manager with `provideAnalytics()`, custom events, Co
 
 - A testing helper that records events in specs of the apps that use the package.
 - Server-side tagging (a custom `transport_url`).
+- Events sent from the server through the GA4 Measurement Protocol, for example a purchase confirmed on the backend, with the visitor's consent from the browser and the API secret kept on the server.
 - Other measurement tools behind the same API, if users ask for them.
 
 ## Support policy
