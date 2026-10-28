@@ -1,5 +1,5 @@
 import { DOCUMENT, Location, isPlatformBrowser } from '@angular/common'
-import { DestroyRef, Injectable, PLATFORM_ID, inject } from '@angular/core'
+import { CSP_NONCE, DestroyRef, Injectable, PLATFORM_ID, inject } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NavigationEnd, Router } from '@angular/router'
 import { filter } from 'rxjs'
@@ -12,6 +12,7 @@ import { GoogleTag, installGoogleTag } from './google-tag'
 export class Analytics {
     private readonly config = inject(ANALYTICS_CONFIG)
     private readonly document = inject(DOCUMENT)
+    private readonly nonce = inject(CSP_NONCE, { optional: true })
     private readonly inBrowser = isPlatformBrowser(inject(PLATFORM_ID))
     private readonly router = inject(Router)
     private readonly location = inject(Location)
@@ -22,7 +23,7 @@ export class Analytics {
     start(): void {
         if (!this.inBrowser || this.googleTag) return
 
-        this.googleTag = installGoogleTag(this.document, this.config)
+        this.googleTag = installGoogleTag(this.document, this.config, this.nonce)
         this.sendPageViewAfterEachNavigation()
     }
 
