@@ -80,6 +80,32 @@ describe("start: 'manual'", () => {
         expect(gtagCommands('event')).toHaveLength(1)
     })
 
+    it('passes on a consent choice made before start(), right after the defaults', async () => {
+        TestBed.configureTestingModule({
+            providers: [
+                provideRouter(routes),
+                provideAnalytics({
+                    tag: 'gtag',
+                    measurementId: 'G-TEST123',
+                    start: 'manual',
+                    consentDefaults: { analytics_storage: 'denied', ad_storage: 'denied' },
+                }),
+            ],
+        })
+        await TestBed.inject(Router).navigateByUrl('/shop')
+        const analytics = TestBed.inject(Analytics)
+
+        analytics.updateConsent({ analytics_storage: 'granted' })
+        analytics.updateConsent({ ad_storage: 'granted' })
+        expect(dataLayerEntries()).toEqual([])
+        analytics.start()
+
+        expect(gtagCommands('consent')).toEqual([
+            ['consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied' }],
+            ['consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted' }],
+        ])
+    })
+
     it('stays quiet on the server, even after start()', async () => {
         const router = startAppWithoutAnalytics('server')
         await router.navigateByUrl('/shop')
