@@ -27,6 +27,7 @@ Step-by-step guide: [Moving from 2.x](docs/en/06-migrating-from-2.md).
 -   analytics.js (`trackingType: 'analytics'`) is no longer supported, since Google retired Universal Analytics.
 -   Angular 21 or 22 is required; `@angular/router` and `rxjs` are peer dependencies.
 -   With Google Tag Manager, remove the snippet from `index.html`; the package loads the container.
+-   With Google Tag Manager, the data layer uses GA4 names: page views are `page_view` with `page_location` and `page_title` (was `pageview` with `page.path` and `page.title`), and events carry their own name instead of `GAEvent`. Triggers and variables in the container need updating; see [Moving from 2.x](docs/en/06-migrating-from-2.md#with-google-tag-manager-update-the-container).
 
 ### Added
 

@@ -46,6 +46,19 @@ Verzija 3 ima novo ime paketa, manji API i MIT licencu. Verzija 2.x ostaje na np
 5. Zamijeni `[perpetuumAnalytics]` s `perpetuumTrack` i uvezi `TrackEvent` gdje ga koristiš.
 6. Isključi prikaze stranica iz povijesti preglednika u GA4, kao u [Početku](pocetak#jedna-postavka-u-google-analyticsu).
 
+## Uz Google Tag Manager: osvježi kontejner
+
+U 3.x data layer govori jezikom GA4, pa okidači i varijable u kontejneru koji slušaju imena iz 2.x trebaju jednu prilagodbu:
+
+| Data layer u 2.x                                                           | Data layer u 3.x                                     |
+| -------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `{ event: 'pageview', page: { path, title } }`                             | `{ event: 'page_view', page_location, page_title }`  |
+| `{ event: 'GAEvent', eventCategory, eventAction, eventLabel, eventValue }` | `{ event: 'add_to_cart', …params }`, po imenu eventa |
+
+1. U kontejneru dodaj okidače za nova imena uz stare: vlastiti event `page_view` i po jedan vlastiti event za svako ime eventa koje šalješ.
+2. Usmjeri varijable na `page_location` (cijela adresa) i `page_title` umjesto `page.path` i `page.title`.
+3. Objavi kontejner, zatim objavi aplikaciju s 3.x, pa makni stare okidače. Tako se nijedan prikaz stranice ne izgubi dok se to dvoje susreće.
+
 ## Ako si tag učitavao tek nakon privole
 
 U 2.x neke su aplikacije zvale `setGoogleAnalyticsScripts()` tek kad je posjetitelj pristao. U 3.x koristi [Consent Mode](consent-mode): tag se učita sa svime na `denied` i slijedi izbor.
