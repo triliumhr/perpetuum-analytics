@@ -47,7 +47,7 @@ Yes. Pass the choice to `updateConsent()`; any banner or consent tool that repor
 
 ### What about Content Security Policy?
 
-Allow `https://www.googletagmanager.com` in `script-src`, plus the Google Analytics hosts in `connect-src` and `img-src`, as Google describes for its tag.
+With a nonce-based policy, give Angular the page's nonce (`ngCspNonce` on the root element, or `CSP_NONCE`) and the Google tag script carries it, so `script-src` needs no Google host. Since 3.1; see [Strict Content Security Policy](getting-started#strict-content-security-policy). With a host-based policy, allow `https://www.googletagmanager.com` in `script-src`. Either way, allow the Google Analytics hosts in `connect-src` and `img-src`.
 
 ### I use 2.x. Do I have to move?
 

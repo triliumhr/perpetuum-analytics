@@ -50,6 +50,26 @@ Paket sam šalje prikaz stranice za svaku navigaciju, s naslovom nove rute. Goog
 
 Otvori aplikaciju, pa Google Analytics › Reports › Realtime. Svaka navigacija se vidi kao `page_view` s naslovom stranice. Za detaljniji pogled koristi [DebugView](cesta-pitanja#kako-vidim-evente-dok-razvijam).
 
+## Strogi Content Security Policy
+
+_Od verzije 3.1_
+
+Uz Content Security Policy s nonceom, skripta Google taga nosi nonce stranice, pa `script-src` ne treba nijedan Googleov host. Daj Angularu nonce onako kako ga ionako čita: server ga upiše u korijenski element aplikacije, uz isti nonce u zaglavlju `Content-Security-Policy`.
+
+```html
+<app-root ngCspNonce="…"></app-root>
+```
+
+Angular čita `ngCspNonce` kao `CSP_NONCE`, a skripta koju dodaje `provideAnalytics()` ga dobiva. Isto radi i kad sam daš `CSP_NONCE`. Nonce je nov za svaki odgovor, pa uvijek dolazi sa servera, nikad iz koda aplikacije.
+
+Pravila koja rade s gtag.js:
+
+```text
+script-src 'self' 'nonce-…'; connect-src https://*.google-analytics.com https://*.googletagmanager.com; img-src https://*.google-analytics.com https://*.googletagmanager.com
+```
+
+Bez `CSP_NONCE` skripta nema nonce, kao i dosad. Tagovi koje kontejner Tag Managera dodaje sam slijede Googleove upute za Content Security Policy uz Tag Manager.
+
 ## Dalje
 
 - [Vlastiti eventi](dogadaji), npr. `add_to_cart` i `sign_up`

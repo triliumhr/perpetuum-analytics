@@ -47,7 +47,7 @@ Da. Prenesi izbor u `updateConsent()`; radi svaki banner ili alat za privolu koj
 
 ### Što s Content Security Policyjem?
 
-Dopusti `https://www.googletagmanager.com` u `script-src`, a hostove Google Analyticsa u `connect-src` i `img-src`, kako Google opisuje za svoj tag.
+Uz pravila s nonceom daj Angularu nonce stranice (`ngCspNonce` na korijenskom elementu ili `CSP_NONCE`), i skripta Google taga ga nosi, pa `script-src` ne treba nijedan Googleov host. Od verzije 3.1; vidi [Strogi Content Security Policy](pocetak#strogi-content-security-policy). Uz pravila po hostovima dopusti `https://www.googletagmanager.com` u `script-src`. U oba slučaja dopusti hostove Google Analyticsa u `connect-src` i `img-src`.
 
 ### Koristim 2.x. Moram li prijeći?
 
