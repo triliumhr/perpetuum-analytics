@@ -19,12 +19,17 @@ export class Analytics {
     private readonly destroyRef = inject(DestroyRef)
     private googleTag: GoogleTag | null = null
 
-    /** Loads the tag and starts page views. provideAnalytics() calls it once, when the app starts. */
+    /**
+     * Loads the tag and starts page views. provideAnalytics() calls it when the app starts;
+     * with `start: 'manual'` the app calls it, for example once the visitor agrees. Calling it again does nothing.
+     */
     start(): void {
         if (!this.inBrowser || this.googleTag) return
 
         this.googleTag = installGoogleTag(this.document, this.config, this.nonce)
         this.sendPageViewAfterEachNavigation()
+        // A late start finds the visitor already on a page, and that page would otherwise never be counted.
+        if (this.router.navigated) this.sendPageView()
     }
 
     /** Sends a custom event, such as `add_to_cart` or `sign_up`. */

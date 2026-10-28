@@ -8,6 +8,11 @@ export type ConsentState = Readonly<Partial<Record<ConsentSignal, 'granted' | 'd
 interface SharedConfig {
     /** Consent Google assumes until the app calls `updateConsent()`. Without it, the tag sends no consent command. */
     readonly consentDefaults?: ConsentState
+    /**
+     * `'auto'` (default) loads the tag when the app starts. `'manual'` waits for `Analytics.start()`,
+     * for apps that may load nothing from Google before the visitor agrees, as `setGoogleAnalyticsScripts()` did in 2.x.
+     */
+    readonly start?: 'auto' | 'manual'
 }
 
 /** Which Google tag the app uses and the id it reports to. */
