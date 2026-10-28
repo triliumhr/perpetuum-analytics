@@ -11,19 +11,19 @@ Verzija 3 ima novo ime paketa, manji API i MIT licencu, a zadržava sve što je 
 
 ## Promjene koje traže prilagodbu
 
-| 2.x                                                                 | 3.x                                                          |
-| ------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `npm i perpetuum-analytics`                                         | `npm i @triliumhr/perpetuum-analytics`                       |
-| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`     | `provideAnalytics({ tag: 'gtag', measurementId })`           |
-| `trackingType: 'gtm'` uz vlastiti isječak                           | `provideAnalytics({ tag: 'gtm', containerId })`, bez isječka |
-| `analytics.setGoogleAnalyticsScripts()` u `AppComponent`            | ništa, provider kreće sam                                    |
-| `setGoogleAnalyticsScripts()` pozvan nakon privole                  | `start: 'manual'` i `analytics.start()`                      |
-| GTM data layer `pageview` i `GAEvent`                               | imena GA4, ili ona iz 2.x uz `legacyEventNames: true`        |
-| `sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                              |
-| `[perpetuumAnalytics]="{ … }"`                                      | `perpetuumTrack="name"` uz `[perpetuumTrackParams]`          |
-| `trackingType: 'analytics'` (analytics.js)                          | uklonjeno, Google je ugasio Universal Analytics              |
-| Angular 13 i noviji                                                 | Angular 21 i 22                                              |
-| GPL-3.0                                                             | MIT                                                          |
+| 2.x                                                                 | 3.x                                                                 |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `npm i perpetuum-analytics`                                         | `npm i @triliumhr/perpetuum-analytics`                              |
+| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`     | `provideAnalytics({ tag: 'gtag', measurementId })`                  |
+| `trackingType: 'gtm'` uz vlastiti isječak                           | `provideAnalytics({ tag: 'gtm', containerId })`, bez isječka        |
+| `analytics.setGoogleAnalyticsScripts()` u `AppComponent`            | provider kreće sam, ili na `analytics.start()` uz `start: 'manual'` |
+| `setGoogleAnalyticsScripts()` pozvan nakon privole                  | `start: 'manual'` i `analytics.start()`                             |
+| GTM data layer `pageview` i `GAEvent`                               | imena GA4, ili ona iz 2.x uz `legacyEventNames: true`               |
+| `sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                     |
+| `[perpetuumAnalytics]="{ … }"`                                      | `perpetuumTrack="name"` uz `[perpetuumTrackParams]`                 |
+| `trackingType: 'analytics'` (analytics.js)                          | uklonjeno, Google je ugasio Universal Analytics                     |
+| Angular 13 i noviji                                                 | Angular 21 i 22                                                     |
+| GPL-3.0                                                             | MIT                                                                 |
 
 ## Korak po korak
 

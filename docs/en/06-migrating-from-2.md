@@ -11,19 +11,19 @@ Version 3 has a new package name, a smaller API and the MIT licence, and keeps e
 
 ## Breaking changes
 
-| 2.x                                                                 | 3.x                                                         |
-| ------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `npm i perpetuum-analytics`                                         | `npm i @triliumhr/perpetuum-analytics`                      |
-| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`     | `provideAnalytics({ tag: 'gtag', measurementId })`          |
-| `trackingType: 'gtm'` with your own snippet                         | `provideAnalytics({ tag: 'gtm', containerId })`, no snippet |
-| `analytics.setGoogleAnalyticsScripts()` in `AppComponent`           | nothing, the provider starts on its own                     |
-| `setGoogleAnalyticsScripts()` called after consent                  | `start: 'manual'` and `analytics.start()`                   |
-| GTM data layer `pageview` and `GAEvent`                             | GA4 names, or the 2.x ones with `legacyEventNames: true`    |
-| `sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                             |
-| `[perpetuumAnalytics]="{ … }"`                                      | `perpetuumTrack="name"` with `[perpetuumTrackParams]`       |
-| `trackingType: 'analytics'` (analytics.js)                          | removed, Google retired Universal Analytics                 |
-| Angular 13 and newer                                                | Angular 21 and 22                                           |
-| GPL-3.0                                                             | MIT                                                         |
+| 2.x                                                                 | 3.x                                                                              |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `npm i perpetuum-analytics`                                         | `npm i @triliumhr/perpetuum-analytics`                                           |
+| `AnalyticsModule.forRoot({ trackingId, trackingType: 'gtag' })`     | `provideAnalytics({ tag: 'gtag', measurementId })`                               |
+| `trackingType: 'gtm'` with your own snippet                         | `provideAnalytics({ tag: 'gtm', containerId })`, no snippet                      |
+| `analytics.setGoogleAnalyticsScripts()` in `AppComponent`           | the provider starts on its own, or on `analytics.start()` with `start: 'manual'` |
+| `setGoogleAnalyticsScripts()` called after consent                  | `start: 'manual'` and `analytics.start()`                                        |
+| GTM data layer `pageview` and `GAEvent`                             | GA4 names, or the 2.x ones with `legacyEventNames: true`                         |
+| `sendEvent({ eventCategory, eventAction, eventLabel, eventValue })` | `analytics.event(name, params)`                                                  |
+| `[perpetuumAnalytics]="{ … }"`                                      | `perpetuumTrack="name"` with `[perpetuumTrackParams]`                            |
+| `trackingType: 'analytics'` (analytics.js)                          | removed, Google retired Universal Analytics                                      |
+| Angular 13 and newer                                                | Angular 21 and 22                                                                |
+| GPL-3.0                                                             | MIT                                                                              |
 
 ## Step by step
 
