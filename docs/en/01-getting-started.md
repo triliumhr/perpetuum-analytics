@@ -9,6 +9,8 @@ summary: Install the package, add one provider and see the first page view in Go
 
 Perpetuum Analytics connects an Angular app to Google Analytics 4 or Google Tag Manager. It is safe with server-side rendering: on the server it does nothing, in the browser it loads the tag and sends a page view after every navigation.
 
+_Formerly `perpetuum-analytics`._ Version 3 continues the 2.x package of that name, by the same author, under a new name and the MIT licence. Coming from 2.x? See [Moving from 2.x](migrating-from-2).
+
 ## Requirements
 
 - Angular 21 or 22, standalone or with NgModules

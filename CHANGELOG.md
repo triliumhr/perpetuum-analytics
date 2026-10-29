@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   The README opens with the `<perpetuum-analytics />` logo in the brand colours, in light and dark.
+-   The README and the getting started guide say that version 3 continues the 2.x package `perpetuum-analytics`, by the same author.
 
 ## [3.0.1] - 2026-10-28
 

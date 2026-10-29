@@ -10,6 +10,10 @@ Works with Angular 21 and 22: standalone or NgModule apps, with or without zone.
 
 Full guide with how-to examples and a FAQ, in English and Croatian: [`docs/`](docs).
 
+## Formerly `perpetuum-analytics`
+
+Version 3 continues [`perpetuum-analytics`](https://www.npmjs.com/package/perpetuum-analytics), the package published since 2020 as `nrozic/perpetuum-ng-analytics`. Same author, same purpose, now under the Trilium name and the MIT licence. Coming from 2.x? See [Moving from 2.x](#moving-from-2x).
+
 ## Installation
 
 ```bash

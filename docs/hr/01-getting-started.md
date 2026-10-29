@@ -9,6 +9,8 @@ summary: Instaliraj paket, dodaj jedan provider i vidi prvi prikaz stranice u Go
 
 Perpetuum Analytics povezuje Angular aplikaciju s Google Analyticsom 4 ili Google Tag Managerom. Siguran je uz renderiranje na serveru (SSR): na serveru ne radi ništa, a u pregledniku učita tag i nakon svake navigacije pošalje prikaz stranice.
 
+_Prije `perpetuum-analytics`._ Verzija 3 nastavak je istoimenog paketa 2.x, istog autora, pod novim imenom i MIT licencom. Dolaziš s 2.x? Vidi [Prijelaz s 2.x](migracija).
+
 ## Što treba
 
 - Angular 21 ili 22, standalone ili s NgModulima
