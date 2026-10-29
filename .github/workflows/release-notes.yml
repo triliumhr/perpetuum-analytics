@@ -1,0 +1,49 @@
+name: Release notes
+
+# Opens the GitHub release for a version that is already tagged, such as one published by hand.
+# It publishes nothing to npm; the Release workflow does that and opens its own release.
+on:
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: The existing tag, for example v3.0.0
+                required: true
+            notes:
+                description: Release notes, when the changelog at that tag has no entry for the version
+                required: false
+
+permissions:
+    contents: write
+
+jobs:
+    release-notes:
+        name: Open the GitHub release
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  ref: ${{ inputs.tag }}
+            - name: Open the release with the changelog entry of the version
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  TAG: ${{ inputs.tag }}
+                  NOTES: ${{ inputs.notes }}
+              run: |
+                  if gh release view "$TAG" > /dev/null 2>&1; then
+                      echo "::notice::The GitHub release $TAG already exists."
+                      exit 0
+                  fi
+                  notes="$NOTES"
+                  if [ -z "$notes" ]; then
+                      notes=$(awk -v version="${TAG#v}" '
+                          $0 ~ "^## \\[" version "\\]" { printing = 1; next }
+                          printing && /^## \[/ { exit }
+                          printing { print }
+                      ' CHANGELOG.md)
+                  fi
+                  if [ -z "$notes" ]; then
+                      echo "::error::CHANGELOG.md at $TAG has no entry for ${TAG#v}; pass the notes."
+                      exit 1
+                  fi
+                  # An older version never takes the "Latest" badge from the newest release.
+                  gh release create "$TAG" --verify-tag --title "$TAG" --notes "$notes" --latest=false
