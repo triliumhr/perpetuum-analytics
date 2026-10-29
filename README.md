@@ -1,3 +1,16 @@
+# perpetuum-analytics lives on as `@triliumhr/perpetuum-analytics`
+
+The package is actively maintained, by the same author, at a new address and with a new major version. Version 3 is [`@triliumhr/perpetuum-analytics`](https://www.npmjs.com/package/@triliumhr/perpetuum-analytics): the same SSR-safe Google Analytics for Angular, now with Google Tag Manager, Consent Mode, a standalone `provideAnalytics()` and the MIT licence. It has [a published support policy](https://github.com/triliumhr/perpetuum-analytics/blob/main/docs/en/10-support.md) and [a public roadmap](https://github.com/triliumhr/perpetuum-analytics/blob/main/ROADMAP.md).
+
+-   **Moving:** `npm uninstall perpetuum-analytics && npm install @triliumhr/perpetuum-analytics`, then follow the [guide for moving from 2.x](https://github.com/triliumhr/perpetuum-analytics/blob/main/docs/en/06-migrating-from-2.md). It maps every 2.x call to its 3.x counterpart.
+-   **Angular versions:** 3.x supports Angular 21 and 22. On an older Angular, stay on 2.x until you upgrade Angular.
+-   **2.x keeps working.** It gets security fixes until 30 April 2027, with no new features and no new Angular versions. After that date it stays on npm as it is.
+-   **Security reports:** see [SECURITY.md](https://github.com/triliumhr/perpetuum-analytics/blob/main/SECURITY.md).
+
+The 2.x documentation follows below, unchanged.
+
+---
+
 # Perpetuum Ng Analytics
 
 [![](https://img.shields.io/badge/version-1.1.4-green.svg)](https://perpetuum.eu)

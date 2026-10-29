@@ -1,7 +1,7 @@
 {
   "name": "perpetuum-analytics",
   "description": "Google Analytics module for Angular. This module is SSR compatible and can be used in Angular Universal applications",
-  "version": "2.0.20",
+  "version": "2.0.21",
   "author": {
     "name": "Nikola Rožić",
     "email": "nikola@trilium.io",
@@ -16,10 +16,10 @@
     "Google Analytics v4",
     "gtag.js Angular"
   ],
-  "homepage": "https://github.com/nrozic/perpetuum-ng-analytics",
+  "homepage": "https://github.com/triliumhr/perpetuum-analytics/tree/2.x",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nrozic/perpetuum-ng-analytics.git"
+    "url": "https://github.com/triliumhr/perpetuum-analytics.git"
   },
   "dependencies": {
     "tslib": "^2.0.0"
