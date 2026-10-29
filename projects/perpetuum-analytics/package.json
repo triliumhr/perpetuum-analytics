@@ -1,7 +1,7 @@
 {
     "name": "@triliumhr/perpetuum-analytics",
     "description": "SSR-safe Google Analytics 4 and Google Tag Manager for Angular: quiet on the server, a page view on every navigation in the browser.",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "author": {
         "name": "Nikola Rožić",
         "email": "nikola@trilium.io",

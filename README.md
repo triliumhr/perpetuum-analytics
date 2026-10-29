@@ -1,4 +1,4 @@
-# &lt;perpetuum-analytics /&gt;
+<h1><img src="https://raw.githubusercontent.com/triliumhr/perpetuum-analytics/main/assets/logo.svg" alt="perpetuum-analytics" width="571" height="58"></h1>
 
 SSR-safe Google Analytics 4 and Google Tag Manager for Angular.
 
