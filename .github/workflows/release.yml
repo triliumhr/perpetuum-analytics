@@ -1,10 +1,14 @@
 name: Release
 
-# A version tag (v3.0.0) publishes that version to npm. npm trusts this workflow through Trusted Publishing,
+# Publishes the version in package.json to npm. npm trusts this workflow through Trusted Publishing,
 # so the repository holds no npm token, and every version carries a provenance statement.
+# Two ways in: a version tag pushed by hand (v3.0.0), or "Run workflow" on main, which also tags the
+# version and opens its GitHub release. The npm environment holds the approval before anything is published.
+# GitHub sends no event when more than three tags are pushed at once, so tags pushed together publish nothing.
 on:
     push:
         tags: ['v*']
+    workflow_dispatch:
 
 permissions:
     contents: read
@@ -15,7 +19,15 @@ jobs:
         name: Publish to npm
         runs-on: ubuntu-latest
         environment: npm
+        permissions:
+            contents: write
+            id-token: write
         steps:
+            - name: A manual run starts from main
+              if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+              run: |
+                  echo "::error::Run the release from main, not $GITHUB_REF_NAME."
+                  exit 1
             - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
@@ -26,8 +38,16 @@ jobs:
             - run: npm run lint
             - run: npm test
             - run: npm run pack:check
+            - name: The version to release
+              id: version
+              run: echo "tag=v$(node -p "require('./projects/perpetuum-analytics/package.json').version")" >> "$GITHUB_OUTPUT"
             - name: The tag matches the package version
-              run: test "v$(node -p "require('./projects/perpetuum-analytics/package.json').version")" = "$GITHUB_REF_NAME"
+              if: github.event_name == 'push'
+              run: test "${{ steps.version.outputs.tag }}" = "$GITHUB_REF_NAME"
+            - name: The version has a changelog entry
+              run: grep -q "^## \\[${STEPS_TAG#v}\\]" CHANGELOG.md
+              env:
+                  STEPS_TAG: ${{ steps.version.outputs.tag }}
             # A version published by hand (3.0.0 was) is already on npm; the tag then only marks it in git.
             - name: Is this version on npm yet
               id: npm
@@ -43,3 +63,20 @@ jobs:
             - run: npm publish --provenance --access public
               if: steps.npm.outputs.published == 'false'
               working-directory: dist/perpetuum-analytics
+            # A tag pushed by the workflow's own token starts no new run, so the release is not published twice.
+            - name: Tag the version and open its GitHub release
+              if: github.event_name == 'workflow_dispatch'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  TAG: ${{ steps.version.outputs.tag }}
+              run: |
+                  if gh release view "$TAG" > /dev/null 2>&1; then
+                      echo "::notice::The GitHub release $TAG already exists."
+                      exit 0
+                  fi
+                  notes=$(awk -v version="${TAG#v}" '
+                      $0 ~ "^## \\[" version "\\]" { printing = 1; next }
+                      printing && /^## \[/ { exit }
+                      printing { print }
+                  ' CHANGELOG.md)
+                  gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes "$notes"
