@@ -28,6 +28,24 @@ jobs:
             - run: npm test
             - run: npm run pack:check
 
+    # engines promises Node ^22.22.3 || >=24.15.0, so the specs also run on the oldest supported Node
+    # and on the newest LTS (26 since October 2026).
+    node:
+        name: Tests on Node ${{ matrix.node }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                node: [22, 26]
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: ${{ matrix.node }}
+                  cache: npm
+            - run: npm ci
+            - run: npm test
+
     # The package promises Angular ^21 || ^22 to its users, so the specs also run on the older major.
     # Angular 21 needs its own build tools and TypeScript 5.9, hence the matching set.
     angular-21:
