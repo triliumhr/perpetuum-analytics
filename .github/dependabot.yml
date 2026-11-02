@@ -19,6 +19,12 @@ updates:
       ignore:
           - dependency-name: '@angular/*'
             update-types: ['version-update:semver-major']
+          # Angular fixes the TypeScript range it compiles with (22.2: >=6.0 <6.1), so TypeScript moves with an Angular update.
+          - dependency-name: 'typescript'
+            update-types: ['version-update:semver-major', 'version-update:semver-minor']
+          # The types follow the oldest Node the package supports (engines: Node 22), not the newest release.
+          - dependency-name: '@types/node'
+            update-types: ['version-update:semver-major']
     - package-ecosystem: github-actions
       directory: /
       schedule:
