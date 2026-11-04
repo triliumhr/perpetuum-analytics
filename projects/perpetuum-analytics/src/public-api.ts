@@ -7,5 +7,6 @@ export type {
     ConsentState,
     EventParams,
     GoogleAnalyticsConfig,
+    PageLocation,
     TagManagerConfig,
 } from './lib/analytics-config'

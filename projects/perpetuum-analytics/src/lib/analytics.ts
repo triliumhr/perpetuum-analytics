@@ -6,6 +6,7 @@ import { filter } from 'rxjs'
 
 import { ANALYTICS_CONFIG, ConsentState, EventParams } from './analytics-config'
 import { GoogleTag, installGoogleTag } from './google-tag'
+import { cleanedAddress } from './page-location'
 
 /** Sends what happens in the app to Google: page views on its own, events when asked. */
 @Injectable({ providedIn: 'root' })
@@ -62,8 +63,15 @@ export class Analytics {
     }
 
     private sendPageView(): void {
-        const path = this.router.url
-        const address = new URL(this.location.prepareExternalUrl(path), this.document.location.origin)
-        this.googleTag?.pageView({ location: address.href, path, title: this.document.title })
+        const title = this.document.title
+        const routerPath = this.router.url
+        const address = new URL(this.location.prepareExternalUrl(routerPath), this.document.location.origin)
+        const { pageLocation } = this.config
+        if (!pageLocation) {
+            this.googleTag?.pageView({ location: address.href, path: routerPath, title })
+            return
+        }
+        const cleaned = cleanedAddress(address, pageLocation)
+        this.googleTag?.pageView({ location: cleaned.href, path: cleaned.pathname + cleaned.search + cleaned.hash, title })
     }
 }

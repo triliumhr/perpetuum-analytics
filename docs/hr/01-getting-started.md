@@ -52,6 +52,30 @@ Paket sam šalje prikaz stranice za svaku navigaciju, s naslovom nove rute. Goog
 
 Otvori aplikaciju, pa Google Analytics › Reports › Realtime. Svaka navigacija se vidi kao `page_view` s naslovom stranice. Za detaljniji pogled koristi [DebugView](cesta-pitanja#kako-vidim-evente-dok-razvijam).
 
+## Čiste adrese
+
+_Od verzije 3.1_
+
+Google dobiva adresu stranice kakvu vidi posjetitelj. Kad adresa može nositi osobne podatke, npr. e-mail u `?email=`, token ili broj narudžbe, očisti je opcijom `pageLocation`. Vrijedi za svaki prikaz stranice, uz gtag.js i uz Tag Manager, i za `page` u imenima iz 2.x.
+
+Zadrži samo parametre upita koji ti trebaju, a ostale ukloni:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', pageLocation: { keepQueryParams: ['q', 'page'] } })
+```
+
+`keepQueryParams: []` uklanja cijeli upit. Za sve ostalo predaj funkciju. Ona dobiva kopiju adrese i vraća onu koju treba poslati, kao `URL` ili tekst; relativni tekst se razrješava prema stranici:
+
+```ts
+provideAnalytics({
+    tag: 'gtag',
+    measurementId: 'G-XXXXXXXXXX',
+    pageLocation: (address) => address.pathname.replace(/^\/narudzbe\/[^/]+/, '/narudzbe/:id'),
+})
+```
+
+`/narudzbe/HR-2026-0042?email=ana@example.com` tada stiže Googleu kao `https://example.com/narudzbe/:id`. Što god funkcija vrati, adresa ostaje apsolutna i na originu aplikacije, pa je Google nikad ne broji kao drugi web.
+
 ## Strogi Content Security Policy
 
 Uz Content Security Policy s nonceom, skripta Google taga nosi nonce stranice, pa `script-src` ne treba nijedan Googleov host. Daj Angularu nonce onako kako ga ionako čita: server ga upiše u korijenski element aplikacije, uz isti nonce u zaglavlju `Content-Security-Policy`.
@@ -76,3 +100,4 @@ Bez `CSP_NONCE` skripta nema nonce, kao i dosad. Tagovi koje kontejner Tag Manag
 - [Google Tag Manager](tag-manager) umjesto gtag.js
 - [Consent Mode](consent-mode)
 - [Zašto je siguran uz SSR](ssr)
+- [Čiste adrese](#ciste-adrese) prije nego odu Googleu

@@ -13,7 +13,19 @@ interface SharedConfig {
      * for apps that may load nothing from Google before the visitor agrees, as `setGoogleAnalyticsScripts()` did in 2.x.
      */
     readonly start?: 'auto' | 'manual'
+    /**
+     * Cleans the page address before it reaches Google, for addresses that carry personal data
+     * (`?email=`, tokens, order numbers). Without it, Google gets the address as the visitor sees it.
+     */
+    readonly pageLocation?: PageLocation
 }
+
+/**
+ * `{ keepQueryParams }` keeps only the listed query parameters and drops the rest.
+ * A function gets a copy of the address and returns the one to send, as a `URL` or a string;
+ * a relative string resolves against the page. The result always stays on the app's origin.
+ */
+export type PageLocation = ((address: URL) => URL | string) | { readonly keepQueryParams: readonly string[] }
 
 /** Which Google tag the app uses and the id it reports to. */
 export interface GoogleAnalyticsConfig extends SharedConfig {

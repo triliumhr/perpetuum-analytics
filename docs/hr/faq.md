@@ -35,7 +35,7 @@ Instaliraj Google Analytics Debugger u Chromeu ili uz Tag Manager otvori spremni
 
 ### Šalje li se Googleu i upit iz adrese?
 
-Da, `page_location` je cijela adresa, kao i kod Googleova taga. Ako adrese mogu sadržavati osobne podatke, npr. e-mail u parametru upita, drži ih izvan adrese ili ih ukloni u postavkama Google taga.
+Po zadanom da: `page_location` je cijela adresa, kao i kod Googleova taga. Od verzije 3.1 `pageLocation` zadržava samo parametre upita koje navedeš ili čisti adresu tvojom funkcijom, npr. da maskira broj narudžbe u putu. Vidi [Čiste adrese](pocetak#ciste-adrese).
 
 ### Postavlja li kolačiće?
 

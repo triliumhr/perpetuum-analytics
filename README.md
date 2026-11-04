@@ -95,6 +95,16 @@ inject(Analytics).start() // when the visitor allows statistics
 
 Until then nothing loads and nothing is sent; a choice passed to `updateConsent()` waits for the tag. See [Load nothing before consent](docs/en/04-consent-mode.md#load-nothing-before-consent).
 
+## Clean addresses
+
+Since 3.1, `pageLocation` cleans the page address before it reaches Google, for addresses that carry an e-mail, a token or an order number:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', pageLocation: { keepQueryParams: ['q'] } })
+```
+
+A function works too, for example to mask `/orders/:id`. The address always stays absolute and on the app's origin. See [Clean addresses](docs/en/01-getting-started.md#clean-addresses).
+
 ## Content Security Policy
 
 With a nonce-based policy, the Google tag script carries Angular's `CSP_NONCE`. The usual way is `ngCspNonce` on the root element, written by the server with the same nonce as in the `Content-Security-Policy` header:

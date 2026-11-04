@@ -35,7 +35,7 @@ Install the Google Analytics Debugger extension in Chrome, or with Tag Manager o
 
 ### Is the query string sent to Google?
 
-Yes, `page_location` is the full address, as Google's own tag sends it. If addresses can contain personal data, such as an e-mail in a query parameter, keep it out of the address or remove it in the Google tag settings.
+By default yes: `page_location` is the full address, as Google's own tag sends it. Since 3.1, `pageLocation` keeps only the query parameters you list, or cleans the address with your own function, for example to mask an order number in the path. See [Clean addresses](getting-started#clean-addresses).
 
 ### Does it set cookies?
 

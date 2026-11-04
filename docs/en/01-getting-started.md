@@ -52,6 +52,30 @@ The package sends a page view for every navigation itself, with the title of the
 
 Open the app, then Google Analytics › Reports › Realtime. Every navigation shows as a `page_view` with the page title. For a closer look, use [DebugView](faq#how-do-i-see-events-while-developing).
 
+## Clean addresses
+
+_Since 3.1_
+
+Google gets the page address as the visitor sees it. When an address can carry personal data, such as an e-mail in `?email=`, a token or an order number, clean it with `pageLocation`. It applies to every page view, with gtag.js and with Tag Manager, and to `page` in the 2.x data layer names.
+
+Keep only the query parameters you need and drop the rest:
+
+```ts
+provideAnalytics({ tag: 'gtag', measurementId: 'G-XXXXXXXXXX', pageLocation: { keepQueryParams: ['q', 'page'] } })
+```
+
+`keepQueryParams: []` drops the whole query. For anything else, pass a function. It gets a copy of the address and returns the one to send, as a `URL` or a string; a relative string resolves against the page:
+
+```ts
+provideAnalytics({
+    tag: 'gtag',
+    measurementId: 'G-XXXXXXXXXX',
+    pageLocation: (address) => address.pathname.replace(/^\/orders\/[^/]+/, '/orders/:id'),
+})
+```
+
+`/orders/HR-2026-0042?email=ana@example.com` then reaches Google as `https://example.com/orders/:id`. Whatever the function returns, the address stays absolute and on the app's own origin, so Google never counts it as another site.
+
 ## Strict Content Security Policy
 
 With a nonce-based Content Security Policy, the Google tag script carries the page's nonce, so `script-src` needs no Google host. Give Angular the nonce the way it reads it anyway: the server writes it into the app's root element, next to the same nonce in the `Content-Security-Policy` header.
@@ -76,3 +100,4 @@ Without `CSP_NONCE` the script carries no nonce, as before. Tags that a Tag Mana
 - [Google Tag Manager](tag-manager) instead of gtag.js
 - [Consent Mode](consent-mode)
 - [How it stays safe with SSR](server-side-rendering)
+- [Clean addresses](#clean-addresses) before they reach Google

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+-   `pageLocation` cleans the page address before it reaches Google: `{ keepQueryParams: [...] }` keeps only the listed query parameters, and a function can mask parts of the path, such as an order number. The address stays absolute and on the app's origin, with gtag.js, Tag Manager and the 2.x data layer names alike.
+
 ## [3.0.3] - 2026-10-29
 
 ### Changed
